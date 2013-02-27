@@ -1,0 +1,51 @@
+circle {
+  fill:rgba(255,205,190,0.9);
+  stroke: #f95;
+  stroke-width: 1.5px;
+}
+
+.active {
+  fill:rgba(155,105,250,1);
+}
+
+.inactive {fill:rgba(255,205,190,0.9);}
+text.node-label {
+  font: 14px sans-serif;
+  pointer-events: none;
+  fill:#d33;
+}
+
+tspan.cycle-label {
+  font: 8px sans-serif;
+  fill:#ccck;
+}
+
+text.weight-label  {
+  fill: #bbb;
+  font: 10px sans-serif;
+}
+
+path.link {
+  fill: none;
+  stroke: #aaa;
+  stroke-width: 1.5px;
+}
+
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+}
+
+marker#exc {
+  stroke: #bbb;
+  fill: white;
+  stroke-width: 1.5px;
+}
+
+marker#inh {
+  stroke: #bbb;
+  fill: #bbb;
+  stroke-width: 1.5px;
+}
+
+path.graph { fill: none; stroke: red;}
