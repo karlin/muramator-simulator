@@ -1,7 +1,13 @@
-circle {
+circle.active {
   fill:rgba(255,205,190,0.9);
   stroke: #f95;
   stroke-width: 1.5px;
+}
+
+circle.inactive {
+  fill:white;
+  stroke:#f00;
+  stroke-width:3px;
 }
 
 .active {
