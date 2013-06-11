@@ -2,139 +2,73 @@
 (function() {
 
   $(function() {
-    var N, clock, dendrites, graphTick, kf, kt, neuronGraph, neurons, onAllTheTime, random, updateNode, v, weeGraph,
-      _this = this;
-    v = 0;
-    neurons = [
-      {
-        name: 'detector',
-        x: 100,
-        y: 100
-      }, {
-        name: 'detectObstacle',
-        x: 200,
-        y: 100,
-        cycle: 15
-      }, {
-        name: 'S1',
-        x: 300,
-        y: 100
-      }, {
-        name: 'S2',
-        x: 350,
-        y: 250
-      }, {
-        name: 'turn',
-        x: 400,
-        y: 100
-      }, {
-        name: 'forward',
-        x: 300,
-        y: 300
-      }, {
-        name: 'explore_ex',
-        x: 200,
-        y: 200,
-        allTheTime: true
-      }, {
-        name: 'seek',
-        x: 150,
-        y: 150,
-        cycle: 5000
-      }, {
-        name: 'seek_ex',
-        x: 100,
-        y: 280,
-        allTheTime: true
-      }, {
-        name: 'emit_ex',
-        x: 50,
-        y: 100,
-        allTheTime: true
-      }, {
-        name: 'emitter',
-        x: 50,
-        y: 200,
-        cycle: 6
-      }
-    ];
-    N = function(x) {
-      var i;
-      return ((function() {
-        var _i, _len, _results;
-        _results = [];
-        for (_i = 0, _len = neurons.length; _i < _len; _i++) {
-          i = neurons[_i];
-          if (i.name === x) {
-            _results.push(i);
+    var clock, connect, graphTick, inputs_for, kf, kt, muramatorNetwork, network, neuronGraph, pƒ, random, select_by_name_from, simpleNetwork, updateNode, v, weeGraph;
+    select_by_name_from = function(n, x) {
+      return function(x) {
+        var i;
+        return ((function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = n.length; _i < _len; _i++) {
+            i = n[_i];
+            if (i.name === x) {
+              _results.push(i);
+            }
           }
-        }
-        return _results;
-      })())[0];
+          return _results;
+        })())[0];
+      };
     };
-    kf = 20;
-    kt = 10;
-    dendrites = [
-      {
-        source: N('detector'),
-        target: N('detectObstacle'),
-        weight: 8
-      }, {
-        label: 'avoid',
-        source: N('detectObstacle'),
-        target: N('S1'),
-        weight: 2
-      }, {
-        source: N('S1'),
-        target: N('turn'),
-        weight: 2
-      }, {
-        source: N('detectObstacle'),
-        target: N('seek'),
-        weight: -100
-      }, {
-        source: N('seek_ex'),
-        target: N('seek'),
-        size: 70,
-        weight: kf
-      }, {
-        source: N('seek'),
-        target: N('seek'),
-        weight: -kt
-      }, {
-        source: N('seek'),
-        target: N('S1'),
-        weight: 2
-      }, {
-        source: N('S1'),
-        target: N('S2'),
-        weight: -2
-      }, {
-        source: N('explore_ex'),
-        target: N('S2'),
-        weight: 2,
-        size: 70
-      }, {
-        source: N('S2'),
-        target: N('forward'),
-        weight: 2
-      }, {
-        source: N('emit_ex'),
-        target: N('emitter'),
-        size: 70,
-        weight: 2
-      }, {
-        source: N('emitter'),
-        target: N('emitter'),
-        weight: -2
+    random = d3.random.normal(1, 0.5);
+    inputs_for = function(network, node) {
+      var link, _i, _len, _ref, _results;
+      _ref = network.links;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        link = _ref[_i];
+        if (link.target === node) {
+          _results.push(link);
+        }
       }
-    ];
-    neuronGraph = function(nodes, links) {
-      var circle, force, h, linkClass, linkMarker, markerPath, n, node, nodeLabel, nodeSize, path, r, svg, text, w, _i, _len,
+      return _results;
+    };
+    pƒ = _.partial;
+    neuronGraph = function(network) {
+      var circle, force, h, inputs, inputs_of, linkClass, linkMarker, links, markerPath, n, node, nodeLabel, nodeSize, nodes, path, r, svg, text, w, _i, _len,
         _this = this;
+      nodes = network.nodes;
+      links = network.links;
+      inputs_of = pƒ(inputs_for, network);
+      if (!(nodes != null) || (nodes != null ? nodes.length : void 0) === 0) {
+        console.log("No nodes");
+      }
       for (_i = 0, _len = nodes.length; _i < _len; _i++) {
         n = nodes[_i];
-        n.active = true;
+        inputs = inputs_of(n);
+        n.active = false;
+        if (n.allTheTime) {
+          n.fn = function() {
+            return 1;
+          };
+        } else {
+          n.fn = function() {
+            n.output = n.active ? 1 : 0;
+            return n.output;
+          };
+        }
+        n.value = function() {
+          var input, input_sum, _j, _len1, _ref;
+          _ref = n.inputs;
+          for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+            input = _ref[_j];
+            console.log(input);
+          }
+          input_sum = n.inputs.reduce(function(t, s) {
+            return t + s;
+          });
+          console.log(input_sum);
+          return input_sum;
+        };
       }
       w = 500;
       h = 350;
@@ -177,15 +111,15 @@
           return n.name;
         }
       };
-      circle = node.append("circle").attr("r", nodeSize).attr("fill", function(d) {
-        if (d.active) {
-          return 'white';
-        } else {
-          return 'black';
-        }
-      });
+      circle = node.append("circle").attr("r", nodeSize).attr("fill", '#f88');
       circle.append('title').text(function(n) {
         return n.name;
+      });
+      circle.on('mouseover', function() {
+        var coords, weeGraph;
+        weeGraph = d3.select('#graph');
+        coords = d3.mouse(weeGraph[0].parentNode);
+        return weeGraph.attr("transform", "translate(" + coords[0] + "," + coords[1] + ")");
       });
       node.append("text").attr("dy", ".2em").attr("text-anchor", "middle").attr("class", "node-label shadow").text(nodeLabel);
       node.append("text").attr("dy", ".2em").attr("text-anchor", "middle").attr("class", "node-label").text(nodeLabel).append('tspan').text(function(n) {
@@ -219,16 +153,166 @@
           return "translate(" + d.x + "," + d.y + ")";
         });
       });
-      return circle;
+      return svg;
     };
-    random = d3.random.normal(1, 0.5);
-    weeGraph = function(v, nodes) {
-      var data, graph, height, line, margin, n, svg, tick, width, x, y;
-      tick = function() {
-        data.push(v());
-        graph.attr("d", line).attr("transform", null).transition().duration(500).ease("linear").attr("transform", "translate(" + x(0) + ")").each("end", tick);
-        return data.shift();
+    muramatorNetwork = function(kf, kt) {
+      var N, dendrites, neurons;
+      neurons = [
+        {
+          name: 'detector',
+          x: 100,
+          y: 100
+        }, {
+          name: 'detectObstacle',
+          x: 200,
+          y: 100,
+          cycle: 15
+        }, {
+          name: 'S1',
+          x: 300,
+          y: 100
+        }, {
+          name: 'S2',
+          x: 350,
+          y: 250
+        }, {
+          name: 'turn',
+          x: 400,
+          y: 100
+        }, {
+          name: 'forward',
+          x: 300,
+          y: 300
+        }, {
+          name: 'explore_ex',
+          x: 200,
+          y: 200,
+          allTheTime: true
+        }, {
+          name: 'seek',
+          x: 150,
+          y: 150,
+          cycle: 5000
+        }, {
+          name: 'seek_ex',
+          x: 100,
+          y: 280,
+          allTheTime: true
+        }, {
+          name: 'emit_ex',
+          x: 50,
+          y: 100,
+          allTheTime: true
+        }, {
+          name: 'emitter',
+          x: 50,
+          y: 200,
+          cycle: 6
+        }
+      ];
+      N = select_by_name_from(neurons);
+      dendrites = [
+        {
+          source: N('detector'),
+          target: N('detectObstacle'),
+          weight: 8
+        }, {
+          label: 'avoid',
+          source: N('detectObstacle'),
+          target: N('S1'),
+          weight: 2
+        }, {
+          source: N('S1'),
+          target: N('turn'),
+          weight: 2
+        }, {
+          source: N('detectObstacle'),
+          target: N('seek'),
+          weight: -100
+        }, {
+          source: N('seek_ex'),
+          target: N('seek'),
+          size: 70,
+          weight: kf
+        }, {
+          source: N('seek'),
+          target: N('seek'),
+          weight: -kt
+        }, {
+          source: N('seek'),
+          target: N('S1'),
+          weight: 2
+        }, {
+          source: N('S1'),
+          target: N('S2'),
+          weight: -2
+        }, {
+          source: N('explore_ex'),
+          target: N('S2'),
+          weight: 2,
+          size: 70
+        }, {
+          source: N('S2'),
+          target: N('forward'),
+          weight: 2
+        }, {
+          source: N('emit_ex'),
+          target: N('emitter'),
+          size: 70,
+          weight: 2
+        }, {
+          source: N('emitter'),
+          target: N('emitter'),
+          weight: -2
+        }
+      ];
+      return {
+        nodes: neurons,
+        links: dendrites
       };
+    };
+    connect = function(n1, n2, params) {
+      var dendrite, param, _i, _len;
+      dendrite = {
+        source: n1,
+        target: n2
+      };
+      for (_i = 0, _len = params.length; _i < _len; _i++) {
+        param = params[_i];
+        dendrite[param] = params[param];
+      }
+      return dendrite;
+    };
+    simpleNetwork = function() {
+      var dendrites, emit_ex, neurons, osc;
+      osc = {
+        name: 'osc',
+        x: 200,
+        y: 200,
+        cycle: 3
+      };
+      emit_ex = {
+        name: 'emit_ex',
+        x: 50,
+        y: 50,
+        allTheTime: true
+      };
+      neurons = [emit_ex, osc];
+      dendrites = [
+        connect(emit_ex, osc, {
+          weight: 2
+        })
+      ];
+      return {
+        nodes: neurons,
+        links: dendrites
+      };
+    };
+    kf = 20;
+    kt = 10;
+    network = muramatorNetwork(kt, kf);
+    weeGraph = function(v) {
+      var bgrect, data, graph, graph_root, height, label, line, margin, n, tick, width, x, y;
       n = 40;
       data = d3.range(n).map(function(x) {
         return v();
@@ -248,35 +332,50 @@
       }).y(function(d, i) {
         return y(d);
       });
-      svg = d3.select("svg").append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      svg.select("defs").append("clipPath").attr("id", "clip").append("rect").attr("width", width).attr("height", height);
-      graph = svg.append("g").attr("clip-path", "url(#clip)").append("path").data([data]).attr("class", "graph").attr("d", line);
+      graph_root = d3.select("svg").append("g").attr('id', 'graph').attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      graph_root.select("defs").append("clipPath").attr("id", "clip").append("rect").attr("width", width).attr("height", height);
+      bgrect = graph_root.append('rect').attr('class', 'graph-bg').attr('x', -20).attr('width', width * 1.3).attr('height', height).attr('rx', 5).attr('ry', 5);
+      graph = graph_root.append("g").attr("clip-path", "url(#clip)").append("path").data([data]).attr("class", "graph").attr("d", line);
+      label = graph_root.append('text').attr('class', 'func-label').attr('transform', "translate(0,20)");
+      tick = function() {
+        data.push(v());
+        graph.attr("d", line).attr("transform", null).transition().duration(500).ease("linear").attr("transform", "translate(" + x(0) + ")").each("end", tick);
+        return data.shift();
+      };
       return tick;
     };
-    updateNode = neuronGraph(neurons, dendrites);
+    updateNode = neuronGraph(network);
     d3.timer(function() {
-      updateNode.attr('class', function(d) {
+      updateNode.selectAll('circle').attr('class', function(d) {
         if (d.active) {
           return "active";
         } else {
           return "inactive";
         }
       });
+      updateNode.selectAll('.link').attr('stroke', function(d) {
+        if (d.source.active) {
+          return "#f88";
+        } else {
+          return "#aaa";
+        }
+      });
       return false;
     }, 200);
+    v = 0;
     clock = function(n) {
+      if (n == null) {
+        n = null;
+      }
       return function() {
         v += 1;
         v = v % 2;
-        n.active = v === 1;
         return v;
       };
     };
-    onAllTheTime = function() {
-      return 1;
-    };
-    graphTick = weeGraph(clock(N('explore_ex')));
-    return graphTick();
+    graphTick = weeGraph(random);
+    graphTick();
+    return window.network = network;
   });
 
 }).call(this);

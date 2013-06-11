@@ -1,10 +1,10 @@
-circle.active {
+circle.inactive {
   fill:rgba(255,205,190,0.9);
   stroke: #f95;
   stroke-width: 1.5px;
 }
 
-circle.inactive {
+circle.active {
   fill:white;
   stroke:#f00;
   stroke-width:3px;
@@ -21,9 +21,10 @@ text.node-label {
   fill:#d33;
 }
 
+.active
 tspan.cycle-label {
   font: 8px sans-serif;
-  fill:#ccck;
+  fill:#ccc;
 }
 
 text.weight-label  {
@@ -33,7 +34,7 @@ text.weight-label  {
 
 path.link {
   fill: none;
-  stroke: #aaa;
+  /*stroke: #aaa;*/
   stroke-width: 1.5px;
 }
 
@@ -54,4 +55,15 @@ marker#inh {
   stroke-width: 1.5px;
 }
 
-path.graph { fill: none; stroke: red;}
+#graph path { fill: none; stroke: red;}
+#graph .func-label  {
+  fill: #bbb;
+  font: 10px sans-serif;
+}
+
+#graph .graph-bg {
+  fill: white;
+  stroke: #ddd;
+  stroke-width: 1;
+  opacity: 0.8;
+}

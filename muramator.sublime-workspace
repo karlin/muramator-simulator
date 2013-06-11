@@ -1,0 +1,472 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"current",
+				"currentWeek"
+			],
+			[
+				"WEEK",
+				"WEEK_DATE_RANGE"
+			],
+			[
+				"mage",
+				"makeWeekRange"
+			],
+			[
+				"hour",
+				"hours_above_expectation"
+			],
+			[
+				"qua",
+				"quarter_kpi"
+			],
+			[
+				"Pun",
+				"PunchIt"
+			],
+			[
+				"aj",
+				"ajaxRequest"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "muramator.coffee",
+			"settings":
+			{
+				"buffer_size": 8821,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/karlinfox/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+			"settings":
+			{
+				"buffer_size": 257,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "muramator.css",
+			"settings":
+			{
+				"buffer_size": 909,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "muramator.html",
+			"settings":
+			{
+				"buffer_size": 499,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"packag",
+				"Package Control: Install Package"
+			],
+			[
+				"package",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Snippet: ",
+				"Snippet: html"
+			]
+		],
+		"width": 575.0
+	},
+	"console":
+	{
+		"height": 247.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/karlinfox/git/muramator-simulator/README.md",
+		"/Users/karlinfox/git/muramator-simulator/weegraph.js",
+		"/Users/karlinfox/git/muramator-simulator/muramator.js",
+		"/Users/karlinfox/git/kpi/config/local_deploy.rb",
+		"/Users/karlinfox/git/punchit2/config/deploy.rb",
+		"/Users/karlinfox/git/kpi/kpi_app.rb",
+		"/Users/karlinfox/git/kpi/Gemfile",
+		"/Users/karlinfox/git/punchit2/web/environment.php",
+		"/Users/karlinfox/git/punchit2/web/index.php",
+		"/Users/karlinfox/git/muramator-simulator/muramator.html",
+		"/Users/karlinfox/git/muramator-simulator/muramator.css",
+		"/Users/karlinfox/git/kpi/public/bullet-graphs.coffee",
+		"/Users/karlinfox/git/muramator-simulator/muramator.coffee",
+		"/Users/karlinfox/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/karlinfox/git/muramator-simulator/jquery-1.9.1.min.js",
+		"/Users/karlinfox/git/punchit_ws/src/main/java/com/atomicobject/punchit/db/DBLayer.java",
+		"/Users/karlinfox/git/punchit_ws/src/main/java/com/atomicobject/punchit/report/PayrollReport.java",
+		"/Users/karlinfox/git/punchit2/web/lib/ReportPayrollPage.class.php",
+		"/Users/karlinfox/git/punchit_ws/src/main/java/com/atomicobject/punchit/report/PayrollReportItem.java",
+		"/Users/karlinfox/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/karlinfox/git/punchit2/kpi/proto/kpi_app.rb",
+		"/Users/karlinfox/Downloads/prog/svg/anim_line.svg",
+		"/Users/karlinfox/.bashrc",
+		"/Users/karlinfox/.env",
+		"/Users/karlinfox/.alias",
+		"/Users/karlinfox/Library/Application Support/Sublime Text 2/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/karlinfox/Desktop/Empty Tunnelblick VPN Configuration/ao.ovpn",
+		"/Users/karlinfox/svn/grease_monkey/punchit_login.user.js",
+		"/Users/karlinfox/svn/grease_monkey/punchit_login_vanilla.user.js"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"active",
+			"label",
+			"for",
+			"value",
+			"nodes",
+			"active",
+			"wee",
+			"dr",
+			"label",
+			"dr",
+			"label",
+			"neuronGraph",
+			"kf",
+			"transfo",
+			"link",
+			"class",
+			"nodes",
+			"call",
+			".fn",
+			"allThe",
+			"blue",
+			"random",
+			"circle",
+			"append",
+			"active",
+			"onAllTheTime",
+			"console",
+			"return",
+			"active",
+			"data",
+			"random",
+			"length",
+			"active",
+			"neurons",
+			"neuronsm",
+			"neurons",
+			"parse_input",
+			"create_resource",
+			"put ",
+			"Defla",
+			"html",
+			"calculate_employee_utilization_report",
+			"Punchit.",
+			"Punchit",
+			"edit-",
+			"makeWeekRange",
+			"currentWeek",
+			"weekTwo",
+			"weekOne",
+			".weeks",
+			"weeks",
+			"PunchIt.weeks",
+			"dateRangeForPeriod",
+			"currentWeek",
+			"dateRangeForWeek",
+			"dateRangeForPeriod",
+			"currentPeriod",
+			"dateRangeForWeek",
+			"vacation",
+			"above_",
+			"iso86",
+			"Kpi",
+			".range",
+			"makeWeekRange",
+			"Calibri",
+			"kpi",
+			"format",
+			"isoDate",
+			"Date.format",
+			".format('yyy",
+			"date",
+			"year",
+			"date.year",
+			"displayBillingPeriodTotals",
+			"canDispl",
+			"displayWeeklyTotals",
+			"weekOne",
+			"kpiAPIUrl",
+			"Kpi",
+			"PunchIt.weeks[0]",
+			"emp",
+			"Utils.ajaxRequest",
+			"KPI",
+			"float: righ",
+			"70%",
+			"notes",
+			"botes",
+			"prev-",
+			"period",
+			"style",
+			"week-totals",
+			"bp",
+			"getEmployeeURL",
+			"getEmployeeDataFromURL",
+			"getPunchData",
+			"PERIOD_DATE_RANGE",
+			"weekTwo",
+			"week2",
+			"weekTwo",
+			"week2",
+			"PERIOD_DATE_RANGE",
+			"dateRangeForPeriod",
+			"PERIOD_DATE_RANGE",
+			"period",
+			"====",
+			"PunchIt.weeks",
+			"h2. ",
+			"PunchIt.weeks",
+			"punchService",
+			"punchStartTime",
+			"* ",
+			"h3. ",
+			"h2. "
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"week",
+			"   * ",
+			"---+++!! ",
+			"---++ "
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "muramator.coffee",
+					"settings":
+					{
+						"buffer_size": 8821,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								815,
+								815
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CoffeeScript/CoffeeScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 135.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/karlinfox/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+					"settings":
+					{
+						"buffer_size": 257,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								95,
+								95
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "muramator.css",
+					"settings":
+					{
+						"buffer_size": 909,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								889,
+								889
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1015.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "muramator.html",
+					"settings":
+					{
+						"buffer_size": 499,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								199,
+								199
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 44.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 167.0,
+	"status_bar_visible": true
+}
