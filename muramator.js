@@ -46,6 +46,7 @@
         n = nodes[_i];
         inputs = inputs_of(n);
         n.active = false;
+        n.input_agg = 0.0;
         if (n.allTheTime) {
           n.fn = function() {
             return 1;
@@ -346,6 +347,7 @@
     };
     updateNode = neuronGraph(network);
     d3.timer(function() {
+      var l, n, source, target, _i, _j, _len, _len1, _ref, _ref1;
       updateNode.selectAll('circle').attr('class', function(d) {
         if (d.active) {
           return "active";
@@ -360,6 +362,18 @@
           return "#aaa";
         }
       });
+      _ref = network.nodes;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        n = _ref[_i];
+        n.input_agg = 0.0;
+      }
+      _ref1 = network.links;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        l = _ref1[_j];
+        source = l.source;
+        target = l.target;
+        target.input_agg += l.weight * source.fn();
+      }
       return false;
     }, 200);
     v = 0;
@@ -373,7 +387,9 @@
         return v;
       };
     };
-    graphTick = weeGraph(random);
+    graphTick = weeGraph(function() {
+      return network.nodes[1].input_agg;
+    });
     graphTick();
     return window.network = network;
   });

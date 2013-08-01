@@ -19,6 +19,7 @@ $ ->
     for n in nodes
       inputs = inputs_of n # find edges that describe inputs to this neuron
       n.active = false # always initially off
+      n.input_agg = 0.0
       if n.allTheTime
         n.fn = -> 1
       else
@@ -318,7 +319,15 @@ $ ->
       )
     updateNode.selectAll('.link').attr('stroke', (d) ->
       if d.source.active then "#f88" else "#aaa")
-    
+
+    # zero out weighted input sums on each tick
+    n.input_agg = 0.0 for n in network.nodes
+
+    for l in network.links
+      source = l.source
+      target = l.target
+      # add the weighted source output as input to the target
+      target.input_agg += l.weight * source.fn()
     false
   ,200)
 
@@ -331,7 +340,7 @@ $ ->
 
   # graphTick = weeGraph(clock(N('explore_ex')))
   # graphTick = weeGraph(clock())
-  graphTick = weeGraph(random)
+  graphTick = weeGraph(->network.nodes[1].input_agg)
   # graphTick = weeGraph(network.nodes[1].fn)
   graphTick()
   window.network = network
