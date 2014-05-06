@@ -55,7 +55,7 @@ $ ->
       .attr("orient", "auto")
       .append("path")
       .attr("d", markerPath)
-        
+
     svg.append("defs").append("marker")
       .attr("id", "exc")
       .attr("viewBox", "0 -7 10 10")
@@ -137,17 +137,17 @@ $ ->
       .attr("y", (d) -> (d.source.y + d.target.y) / 2)
       .attr("text-anchor", "middle")
       .text (t) -> "#{t.weight}"
-        
+
     force.on "tick", ->
       path.attr "d", (d) ->
         dx = d.target.x - d.source.x
         dy = d.target.y - d.source.y
         dr = Math.sqrt(dx * dx + dy * dy)
         "M#{d.source.x},#{d.source.y}A#{dr},#{dr} 0 0,1 #{d.target.x},#{d.target.y}"
-      
+
       text.attr("x", (d) -> (d.source.x + d.target.x) / 2)
         .attr("y", (d) -> (d.source.y + d.target.y) / 2)
-      
+
       node.attr("transform", (d) -> "translate(#{d.x},#{d.y})")
 
     svg
@@ -227,7 +227,7 @@ $ ->
     links: dendrites
 
   connect = (n1, n2, params) ->
-    dendrite = 
+    dendrite =
       source: n1
       target: n2
     for param in params
@@ -239,7 +239,7 @@ $ ->
     emit_ex = {name:'emit_ex', x:50,  y:50, allTheTime: true}
     neurons = [ emit_ex, osc ]
 
-    # N('osc').fn = (t) -> 
+    # N('osc').fn = (t) ->
     dendrites = [
       connect( emit_ex, osc, {weight: 2} ),
     ]
@@ -259,7 +259,7 @@ $ ->
   kf = 20
   kt = 10
   network = muramatorNetwork kt, kf
-  # network = simpleNetwork()  
+  # network = simpleNetwork()
 
   weeGraph = (v) ->
     n = 40
@@ -344,4 +344,3 @@ $ ->
   # graphTick = weeGraph(network.nodes[1].fn)
   graphTick()
   window.network = network
-
