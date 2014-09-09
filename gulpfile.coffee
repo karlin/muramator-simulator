@@ -9,8 +9,10 @@ http = require("http")
 
 gulp.task "copy", ->
   gulp.src([
+    "./src/*.json"
     "./src/*.html"
     "./src/*.css"
+    "./src/*.js"
   ]).pipe gulp.dest("build")
 
 gulp.task "coffee", ->

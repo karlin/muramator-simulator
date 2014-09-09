@@ -10,27 +10,28 @@ $ ->
   inputs_for = (network, node) ->
     link for link in network.links when link.target == node
 
-  pƒ = _.partial
+  pf = _.partial
   neuronGraph = (network) ->
     nodes = network.nodes
     links = network.links
-    inputs_of = pƒ inputs_for, network
+    inputs_of = pf inputs_for, network
     console.log "No nodes" if !nodes? or nodes?.length == 0
     for n in nodes
       inputs = inputs_of n # find edges that describe inputs to this neuron
       n.active = false # always initially off
       n.input_agg = 0.0
       if n.allTheTime
-        n.fn = -> 1
+        n.fn = ->
+          n.output = 1
       else
         n.fn = ->
           n.output = if n.active then 1 else 0
           n.output
       n.value = ->
         console.log(input) for input in n.inputs
-        input_sum = n.inputs.reduce (t, s) -> t + s
-        console.log input_sum
-        input_sum
+        # input_sum = n.inputs.reduce (t, s) -> t + s
+        # console.log input_sum
+        # input_sum
 
     #
     # Graph these puppies
@@ -152,21 +153,7 @@ $ ->
 
     svg
 
-  muramatorNetwork = (kf, kt) ->
-    neurons = [
-      {name:'detector',       x:100, y:100},
-      {name:'detectObstacle', x:200, y:100, cycle:15},
-      {name:'S1',             x:300, y:100},
-      {name:'S2',             x:350, y:250},
-      {name:'turn',           x:400, y:100},
-      {name:'forward',        x:300, y:300},
-      {name:'explore_ex',     x:200, y:200, allTheTime:true},
-      {name:'seek',           x:150, y:150, cycle:5000},
-      {name:'seek_ex',        x:100, y:280, allTheTime: true},
-      {name:'emit_ex',        x:50,  y:100, allTheTime: true},
-      {name:'emitter',        x:50,  y:200, cycle:6},
-    ]
-
+  muramatorNetwork = (kf, kt, neurons) ->
     N = select_by_name_from neurons
 
     dendrites = [
@@ -258,89 +245,90 @@ $ ->
 
   kf = 20
   kt = 10
-  network = muramatorNetwork kt, kf
-  # network = simpleNetwork()
+  $.getJSON('neurons.json').then (data) ->
+    network = muramatorNetwork kt, kf, data.neurons
+    # network = simpleNetwork()
 
-  weeGraph = (v) ->
-    n = 40
-    data = d3.range(n).map((x) -> v())
-    margin =
-      top: 5
-      right: 5
-      bottom: 8
-      left: 5
+    weeGraph = (valueFunc) ->
+      n = 40
+      data = d3.range(n).map((x) -> valueFunc())
+      margin =
+        top: 5
+        right: 5
+        bottom: 8
+        left: 5
 
-    width = 160 - margin.left - margin.right
-    height = 50 - margin.top - margin.bottom
-    x = d3.scale.linear().domain([ 1, n - 2 ]).range([ 0, width ])
-    y = d3.scale.linear().domain([ 0, 2 ]).range([ height, 3])
-    line = d3.svg.line().interpolate("step-before").x((d, i) ->x(i)).y((d, i) -> y(d))
-    graph_root = d3.select("svg")
-      .append("g")
-      .attr('id', 'graph')
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      width = 160 - margin.left - margin.right
+      height = 50 - margin.top - margin.bottom
+      x = d3.scale.linear().domain([ 1, n - 2 ]).range([ 0, width ])
+      y = d3.scale.linear().domain([ 0, 2 ]).range([ height, 3])
+      line = d3.svg.line().interpolate("step-before").x((d, i) ->x(i)).y((d, i) -> y(d))
+      graph_root = d3.select("svg")
+        .append("g")
+        .attr('id', 'graph')
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-    graph_root.select("defs").append("clipPath")
-      .attr("id", "clip")
-      .append("rect")
-      .attr("width", width)
-      .attr("height", height)
-    bgrect = graph_root.append('rect').attr('class', 'graph-bg').attr('x', -20)
-      .attr('width', width*1.3).attr('height', height).attr('rx', 5).attr('ry', 5)
+      graph_root.select("defs").append("clipPath")
+        .attr("id", "clip")
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height)
+      bgrect = graph_root.append('rect').attr('class', 'graph-bg').attr('x', -20)
+        .attr('width', width*1.3).attr('height', height).attr('rx', 5).attr('ry', 5)
 
-    graph = graph_root.append("g")
-      .attr("clip-path", "url(#clip)")
-      .append("path").data([ data ])
-      .attr("class", "graph")
-      .attr("d", line)
-    label = graph_root.append('text')
-      .attr('class', 'func-label')
-      .attr('transform', "translate(0,20)")
+      graph = graph_root.append("g")
+        .attr("clip-path", "url(#clip)")
+        .append("path").data([ data ])
+        .attr("class", "graph")
+        .attr("d", line)
+      label = graph_root.append('text')
+        .attr('class', 'func-label')
+        .attr('transform', "translate(0,20)")
 
-    tick = ->
-      data.push v()
-      graph.attr("d", line)
-        .attr("transform", null)
-        .transition()
-        .duration(500)
-        .ease("linear")
-        .attr("transform", "translate(" + x(0) + ")")
-        .each("end", tick)
-      # TODO graph labels
-      # label.text("#{v()}")
-      data.shift()
+      tick = ->
+        data.push valueFunc()
+        graph.attr("d", line)
+          .attr("transform", "")
+          .transition()
+          .duration(500)
+          .ease("linear")
+          .attr("transform", "translate(" + x(0) + ")")
+          .each("end", tick)
+        # TODO graph labels
+        label.text("#{valueFunc()}")
+        data.shift()
 
-    tick
+      tick
 
-  updateNode = neuronGraph(network)
-  d3.timer(->
-    updateNode.selectAll('circle').attr('class', (d) ->
-      if d.active then "active" else "inactive"
-      )
-    updateNode.selectAll('.link').attr('stroke', (d) ->
-      if d.source.active then "#f88" else "#aaa")
+    updateNode = neuronGraph(network)
+    d3.timer(->
+      updateNode.selectAll('circle').attr('class', (d) ->
+        if d.active then "active" else "inactive"
+        )
+      updateNode.selectAll('.link').attr('stroke', (d) ->
+        if d.source.active then "#f88" else "#aaa")
 
-    # zero out weighted input sums on each tick
-    n.input_agg = 0.0 for n in network.nodes
+      # zero out weighted input sums on each tick
+      n.input_agg = 0.0 for n in network.nodes
 
-    for l in network.links
-      source = l.source
-      target = l.target
-      # add the weighted source output as input to the target
-      target.input_agg += l.weight * source.fn()
-    false
-  ,200)
+      for l in network.links
+        source = l.source
+        target = l.target
+        # add the weighted source output as input to the target
+        target.input_agg += l.weight * source.fn()
+      false
+    ,200)
 
-  v = 0
-  clock = (n=null) ->
-    ->
-      v += 1
-      v = v % 2
-      v
+    v = 0
+    clock = (n=null) ->
+      ->
+        v += 1
+        v = v % 2
+        v
 
-  # graphTick = weeGraph(clock(N('explore_ex')))
-  # graphTick = weeGraph(clock())
-  graphTick = weeGraph(->network.nodes[1].input_agg)
-  # graphTick = weeGraph(network.nodes[1].fn)
-  graphTick()
-  window.network = network
+    # graphTick = weeGraph(clock(N('explore_ex')))
+    graphTick = weeGraph(clock())
+    # graphTick = weeGraph(->network.nodes[1].input_agg)
+    # graphTick = weeGraph(network.nodes[1].fn)
+    graphTick()
+    window.network = network
