@@ -2,10 +2,15 @@ gulp = require("gulp")
 gutil = require("gulp-util")
 concat = require("gulp-concat-sourcemap")
 coffee = require("gulp-coffee")
-open = require("open")
-connect = require("connect")
+watch = require('gulp-watch');
 plumber = require("gulp-plumber")
+connect = require("gulp-connect")
+del = require('del')
+open = require("open")
 http = require("http")
+
+gulp.task 'clean', ->
+  del './build'
 
 gulp.task "copy", ->
   gulp.src([
@@ -16,7 +21,10 @@ gulp.task "copy", ->
   ]).pipe gulp.dest("build")
 
 gulp.task "coffee", ->
-  gulp.src(["./src/**/*.coffee"]).pipe(plumber()).pipe(coffee()).pipe gulp.dest("./src")
+  gulp.src(["./src/**/*.coffee"])
+  .pipe(plumber())
+  .pipe(coffee())
+  .pipe gulp.dest("./src")
 
 gulp.task "default", [
   "coffee"
@@ -24,14 +32,17 @@ gulp.task "default", [
 ], ->
   gulp.src([
     "./lib/**/*.js"
-    "./src/**/*.js"
-  ]).pipe(concat("all.js")).pipe gulp.dest("./build/")
+    "./src/svg.js"
+    "./src/muramator.js"
+  ])
+  .pipe(concat("all.js"), {prefix: 1})
+  .pipe gulp.dest("./build/")
 
-gulp.task "watch", ->
-  gulp.watch "./src/**/*.html", ["default"]
-  gulp.watch "./src/**/*.js", ["default"]
-  gulp.watch "./lib/**/*.js", ["default"]
-  gulp.watch "./src/**/*.coffee", ["coffee"]
+# gulp.task "watch", ->
+#   gulp.watch "./src/**/*.html", ["default"]
+#   gulp.watch "./src/**/*.js", ["default"]
+#   gulp.watch "./lib/**/*.js", ["default"]
+#   gulp.watch "./src/**/*.coffee", ["coffee"]
 
 gulp.task "server", ["watch"], (callback) ->
   # devApp = undefined
@@ -41,9 +52,7 @@ gulp.task "server", ["watch"], (callback) ->
   # url = undefined
   log = gutil.log
   colors = gutil.colors
-  devApp = connect()
-    .use connect.logger("dev")
-    .use connect.static("build")
+  devApp = connect().server
 
   # change port and hostname to something static if you prefer
   devServer = http.createServer(devApp).listen(0) #, hostname
@@ -53,7 +62,8 @@ gulp.task "server", ["watch"], (callback) ->
 
   devServer.on "listening", ->
     devAddress = devServer.address()
-    devHost = (if devAddress.address is "0.0.0.0" then "localhost" else devAddress.address)
+    console.log(devAddress)
+    devHost = (if devAddress.address is "::" then "localhost" else devAddress.address)
     url = "http://" + devHost + ":" + devAddress.port + "/muramator.html"
     log ""
     log "Started dev server at " + colors.magenta(url)
@@ -67,3 +77,16 @@ gulp.task "server", ["watch"], (callback) ->
     return
 
   return
+
+
+gulp.task 'html', ->
+  gulp.src('./src/*.html', './*.js')
+    .pipe(connect.reload())
+ 
+gulp.task 'watch', ->
+  gulp.watch(['./src/*.html'], ['html'])
+
+gulp.task 'serve', ['default'], ->
+  connect.server
+    root: 'build'
+    livereload: true
