@@ -1,3 +1,7 @@
+body {
+  background-color: black;
+}
+
 circle.inactive {
   fill:rgba(255,205,190,0.9);
   stroke: #f95;
@@ -16,7 +20,7 @@ circle.active {
 
 .inactive {fill:rgba(255,205,190,0.9);}
 text.node-label {
-  font: 14px sans-serif;
+  font: 8px sans-serif;
   pointer-events: none;
   fill:#d33;
 }

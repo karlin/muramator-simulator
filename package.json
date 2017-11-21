@@ -27,6 +27,7 @@
     "gulp-coffee": "*",
     "gulp-concat": "*",
     "gulp-concat-sourcemap": "*",
+    "gulp-sourcemaps": "*",
     "gulp-connect": "*",
     "gulp-plumber": "*",
     "gulp-rimraf": "*",

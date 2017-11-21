@@ -1,6 +1,7 @@
 selectByNameFrom = (n, x) ->
   (x) ->
-    (i for i in n when i.name is x)[0]
+    selected = (i for i in n when i.name is x)
+    selected[0]
 
 resolveNodes = (resolver, link) ->
   for attr in ['source', 'target']
@@ -23,7 +24,7 @@ document.muramator.neuronGraph = (network) ->
   console.log "No nodes" if !nodes? or nodes?.length == 0
   for n in nodes
     inputs = inputsOf n # find edges that describe inputs to this neuron
-    console.log inputs
+    # console.log inputs
     n.active = false # always initially off
     n.input_agg = 0.0
     if n.allTheTime
@@ -34,7 +35,7 @@ document.muramator.neuronGraph = (network) ->
         n.output = if n.active then 1 else 0
         n.output
     n.value = ->
-      console.log(input) for input in n.inputs
+      # console.log(input) for input in n.inputs
       # input_sum = n.inputs.reduce (t, s) -> t + s
       # console.log input_sum
       # input_sum
@@ -154,3 +155,5 @@ document.muramator.neuronGraph = (network) ->
       .attr("y", (d) -> (d.source.y + d.target.y) / 2)
 
     node.attr("transform", (d) -> "translate(#{d.x},#{d.y})")
+
+  svg
