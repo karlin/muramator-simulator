@@ -1,44 +1,6 @@
-selectByNameFrom = (n, x) ->
-  (x) ->
-    selected = (i for i in n when i.name is x)
-    selected[0]
-
-resolveNodes = (resolver, link) ->
-  for attr in ['source', 'target']
-    link[attr] = resolver link[attr]
-  link
-
-random = d3.random.normal(1, 0.5)
-inputsFor = (network, node) ->
-  link for link in network.links when link.target == node.name
-
-pf = _.partial
-
 document.muramator.neuronGraph = (network) ->
-
   nodes = network.nodes
-  # TODO map over links and find nodes for given names'
-  nodeResolver = selectByNameFrom nodes
-  links = (resolveNodes(nodeResolver, link) for link in network.links)
-  inputsOf = pf inputsFor, network
-  console.log "No nodes" if !nodes? or nodes?.length == 0
-  for n in nodes
-    inputs = inputsOf n # find edges that describe inputs to this neuron
-    # console.log inputs
-    n.active = false # always initially off
-    n.input_agg = 0.0
-    if n.allTheTime
-      n.fn = ->
-        n.output = 1
-    else
-      n.fn = ->
-        n.output = if n.active then 1 else 0
-        n.output
-    n.value = ->
-      # console.log(input) for input in n.inputs
-      # input_sum = n.inputs.reduce (t, s) -> t + s
-      # console.log input_sum
-      # input_sum
+  links = network.links
 
   w = 500
   h = 350
@@ -96,6 +58,12 @@ document.muramator.neuronGraph = (network) ->
     .attr("class", "link")
     .attr("marker-end", linkMarker)
 
+  path2 = svg.append("g").selectAll("path")
+    .data(links.filter((l)->l.source == l.target)) # self-links
+    .enter().append("path")
+    .attr("class", "link")
+    .attr("marker-end", linkMarker)
+
   node = svg.selectAll(".node")
     .data(nodes)
     .enter().append("g")
@@ -108,7 +76,7 @@ document.muramator.neuronGraph = (network) ->
     if n.allTheTime then (r * 0.5) else r
 
   nodeLabel = (n) =>
-    if n.allTheTime then '  *' else n.name
+    if n.allTheTime then '*' else n.name
 
   circle = node.append("circle")
     .attr("r", nodeSize)
@@ -150,6 +118,9 @@ document.muramator.neuronGraph = (network) ->
       dy = d.target.y - d.source.y
       dr = Math.sqrt(dx * dx + dy * dy)
       "M#{d.source.x},#{d.source.y}A#{dr},#{dr} 0 0,1 #{d.target.x},#{d.target.y}"
+
+    path2.attr "d", (d) ->
+      "M#{d.source.x},#{d.source.y}c 100,-100,100,120 0,0"
 
     text.attr("x", (d) -> (d.source.x + d.target.x) / 2)
       .attr("y", (d) -> (d.source.y + d.target.y) / 2)

@@ -1,57 +1,61 @@
 # see also, http://jsfiddle.net/karlin/dQvQg/1/
 
 muramatorNetwork = (kf, kt, neurons) ->
+  named = (name) ->
+    neurons.find (n) ->
+      n.name == name
+
   dendrites = [
-      source: 'detector'
-      target: 'detectObstacle'
+      source: named('detector')
+      target: named('detectObstacle')
       weight: 8
     ,
-      label: 'avoid'
-      source: 'detectObstacle'
-      target: 'S1'
+      label: named('avoid')
+      source: named('detectObstacle')
+      target: named('S1')
       weight: 2
     ,
-      source: 'S1'
-      target: 'turn'
+      source: named('S1')
+      target: named('turn')
       weight: 2
     ,
-      source: 'detectObstacle'
-      target: 'seek'
+      source: named('detectObstacle')
+      target: named('seek')
       weight: -100
     ,
-      source: 'seek_ex'
-      target: 'seek'
+      source: named('seek_ex')
+      target: named('seek')
       size: 70
       weight: kf
     ,
-      source: 'seek'
-      target: 'seek'
+      source: named('seek')
+      target: named('seek')
       weight: -kt
     ,
-      source: 'seek'
-      target: 'S1'
+      source: named('seek')
+      target: named('S1')
       weight: 2
     ,
-      source: 'S1'
-      target: 'S2'
+      source: named('S1')
+      target: named('S2')
       weight: -2
     ,
-      source: 'explore_ex'
-      target: 'S2'
+      source: named('explore_ex')
+      target: named('S2')
       weight: 2
       size: 70
     ,
-      source: 'S2'
-      target: 'forward'
+      source: named('S2')
+      target: named('forward')
       weight: 2
     ,
-      source: 'emit_ex'
-      target: 'emitter'
+      source: named('emit_ex')
+      target: named('emitter')
       size: 70
       weight: 2
     ,
-      source: 'emitter'
-      target: 'emitter'
+      source: named('emitter')
+      target: named('emitter')
       weight: -2
   ]
 
@@ -60,75 +64,87 @@ muramatorNetwork = (kf, kt, neurons) ->
 
 connect = (n1, n2, params) =>
   dendrite =
-    source: n1.name
-    target: n2.name
+    source: n1
+    target: n2
   for param of params
     dendrite[param] = params[param]
   dendrite
 
 simpleNetwork = ->
-  osc = {name:'osc',     x:200, y:200, cycle:3}
-  emit_ex = {name:'emit_ex', x:50,  y:50, allTheTime: true}
+  osc =     {name: 'osc',     x: 200, y: 200, cycle: 3000}
+  emit_ex = {name: 'emit_ex', x: 50,  y: 50,  allTheTime: true}
   neurons = [ emit_ex, osc ]
 
-  # N('osc').fn = (t) ->
   dendrites = [
-    connect( emit_ex, osc, {weight: 2} ),
+    connect( emit_ex, osc, { weight: 2 }),
+    connect( osc, osc, { weight: -4 })
   ]
-
-  #     source: neurons[0]
-  #     target: osc
-  #     weight: 2
-  #   ,
-  #     source: osc
-  #     target: osc
-  #     weight: -4
-  # ]
 
   nodes: neurons
   links: dendrites
 
-$ ->
-  kf = 20
-  kt = 10
-  $.getJSON('neurons.json').then (data) ->
-    # network = muramatorNetwork kt, kf, data.neurons
-    network = simpleNetwork()
+kf = 20
+kt = 10
 
-    neuronGraph = document.muramator.neuronGraph
-    updateNode = neuronGraph(network)
-    d3.timer(->
-      updateNode.selectAll('circle').attr('class', (d) ->
-        if d.active then "active" else "inactive")
-      updateNode.selectAll('.link').attr('stroke', (d) ->
-        if d.source.active then "#f88" else "#aaa")
+inputsFor = (network, node) ->
+  link for link in network.links when link.target == node
 
-      # zero out weighted input sums on each tick
-      n.input_agg = 0.0 for n in network.nodes
+# $.getJSON('neurons.json').then (data) ->
+# neurons = data.neurons
+# network = muramatorNetwork kt, kf, neurons
+network = simpleNetwork()
+neurons = network.nodes
 
-      for l in network.links
-        source = l.source
-        target = l.target
-        # add the weighted source output as input to the target
-        if source.fn?
-          target.input_agg += l.weight * source.fn()
-      false
-    ,500)
+neuronGraph = document.muramator.neuronGraph
+updateNode = neuronGraph(network)
 
-    v = 0
-    clock = (n = null) ->
-      ->
-        v += 1
-        v = v % 2
-        v
+inputsOf = _.partial inputsFor, network
 
-    contextGraph = document.muramator.contextGraph
-    # graphTick = contextGraph(clock())
-    # graphTick = contextGraph((clock, n) ->
-    #   ->
-    #     Math.sin(clock())
-    # )
-    # graphTick = contextGraph(->network.nodes[1].input_agg)
-    # graphTick = contextGraph(network.nodes[1].fn)
-    # graphTick()
-    window.network = network
+# Set up state and activation functions
+neurons.forEach (n) ->
+  n.active = false # always initially off
+  n.input_agg = 0.0
+  if n.allTheTime
+    n.fn = =>
+      n.output = 1
+  else
+    n.fn = =>
+      n.output = if n.active then 1 else 0
+
+debugFmt = d3.format("0.2f")
+simulationStep = setInterval((ticks) ->
+  n.fn() for n in network.nodes
+
+  updateNode.selectAll('circle').attr('class', (d) ->
+    if d.active then "active" else "inactive")
+  updateNode.selectAll('.link').attr('stroke', (d) ->
+    if d.source.active then "#f88" else "#aaa")
+
+  _.each network.links, (link) =>
+    target = link.target
+    if target.cycle? and !target.allTheTime
+      source = link.source
+      weight = link.weight * source.output
+      link.target.input_agg += Math.max(0, (weight * (1.0/(target.cycle/200.0))))
+      link.target.input_agg = Math.min(1, link.target.input_agg)
+      target.active = true if target.input_agg >= 1.0
+
+  console.log("= #{network.nodes.map((n)->"#{n.name}: #{debugFmt(n.input_agg)} ")}")
+
+, 200)
+
+v = 0
+clock = (n = null) ->
+  ->
+    v += 1
+    v = v % 2
+    v
+
+contextGraph = document.muramator.contextGraph
+graphTick = contextGraph(clock())
+# graphTick()
+window.network = network
+
+setTimeout(->
+  clearInterval(simulationStep)
+,20000)

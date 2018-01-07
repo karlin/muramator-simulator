@@ -1,7 +1,7 @@
 gulp = require("gulp")
 gutil = require("gulp-util")
 sourcemaps = require("gulp-sourcemaps")
-concat = require("gulp-concat-sourcemap")
+concat = require("gulp-concat")
 coffee = require("gulp-coffee")
 watch = require('gulp-watch');
 plumber = require("gulp-plumber")
@@ -34,9 +34,7 @@ gulp.task "default", [
 ], ->
   gulp.src([
     "./lib/**/*.js"
-    "./build/js/**.js"
   ])
-  .pipe(concat("all.js", {prefix: 1}))
   .pipe(gulp.dest("./build/"))
   .pipe(connect.reload())
 
@@ -53,7 +51,6 @@ gulp.task 'watch:src', ->
 
 gulp.task 'serve', ['default'], ->
   connect.server
-    root: '.'
     livereload: true
 
 gulp.task 'watch', ['serve', 'watch:src']
