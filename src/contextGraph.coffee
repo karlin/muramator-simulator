@@ -1,6 +1,7 @@
 document.muramator.contextGraph = (valueFunc) ->
   n = 40
   data = d3.range(n).map((x) -> valueFunc())
+  console.log(data)
   margin =
     top: 5
     right: 5
@@ -11,7 +12,8 @@ document.muramator.contextGraph = (valueFunc) ->
   height = 50 - margin.top - margin.bottom
   x = d3.scale.linear().domain([ 1, n - 2 ]).range([ 0, width ])
   y = d3.scale.linear().domain([ 0, 2 ]).range([ height, 3])
-  line = d3.svg.line().interpolate("step-before").x((d, i) ->x(i)).y((d, i) -> y(d))
+  labelFmt = d3.format('.2f')
+  line = d3.svg.line().interpolate("step-before").x((d, i)->x(i)).y((d, i)->y(d))
   graph_root = d3.select("svg")
     .append("g")
     .attr('id', 'graph')
@@ -30,23 +32,24 @@ document.muramator.contextGraph = (valueFunc) ->
     .append("path").data([ data ])
     .attr("class", "graph")
     .attr("d", line)
-  graph.on 'mousedown', ->
+  # graph.on 'mousedown', ->
 
   label = graph_root.append('text')
     .attr('class', 'func-label')
     .attr('transform', "translate(0,20)")
 
   tick = ->
-    data.push valueFunc()
+    value = valueFunc()
+    data.push value
     graph.attr("d", line)
       .attr("transform", "")
       .transition()
-      .duration(500)
-      .ease("linear")
-      .attr("transform", "translate(" + x(0) + ")")
+      .duration(100)
+      # .ease("linear")
+      .attr("transform", "translate(#{x(0)})")
       .each("end", tick)
     # TODO graph labels
-    label.text("#{valueFunc()}")
+    label.text("#{labelFmt(value)}")
     data.shift()
 
   tick

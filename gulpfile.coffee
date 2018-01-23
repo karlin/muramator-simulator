@@ -34,7 +34,9 @@ gulp.task "default", [
 ], ->
   gulp.src([
     "./lib/**/*.js"
+    # "./build/js/**.js"
   ])
+  # .pipe(concat("all.js", {prefix: 2}))
   .pipe(gulp.dest("./build/"))
   .pipe(connect.reload())
 
