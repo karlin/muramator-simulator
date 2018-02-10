@@ -1,4 +1,4 @@
-document.muramator.contextGraph = (valueFunc) ->
+document.muramator.contextGraph = (name, valueFunc) ->
   n = 40
   data = d3.range(n).map((x) -> valueFunc())
   margin =
@@ -50,7 +50,7 @@ document.muramator.contextGraph = (valueFunc) ->
       # .duration(200)
       .each("end", tick)
     # TODO graph labels
-    label.text("#{labelFmt(value)}")
+    label.text("#{name}: #{labelFmt(value)}")
     data.shift()
 
   tick

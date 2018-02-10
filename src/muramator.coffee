@@ -95,7 +95,7 @@ inputsFor = (network, node) ->
 
 useSimpleNetwork = true
 
-main = (state) ->
+view = (state) ->
   neuronGraph = document.muramator.neuronGraph
   updateNode = neuronGraph(state.network)
 
@@ -160,35 +160,44 @@ main = (state) ->
 
   if state.graphOn
     contextGraph = document.muramator.contextGraph
-    graphTick = contextGraph(() -> state.network.nodes[1].input_agg)
+    watched = state.network.nodes[1]
+    graphTick = contextGraph(
+      watched.name,
+      () -> watched.input_agg
+    )
 
     # graphTick = contextGraph(clock())
     graphTick()
 
   # window.network = state.network
+  #
+  # setTimeout(->
+  #   clearInterval(simulationStep)
+  # ,20000)
 
-  setTimeout(->
-    clearInterval(simulationStep)
-  ,20000)
+present = ->
+  fetch('neurons.json').then((response) -> response.json()).then (data) ->
 
-fetch('neurons.json').then((response) -> response.json()).then (data) ->
+    if useSimpleNetwork
+      network = simpleNetwork()
+      state = {
+        state...
+        network: network
+        neurons: network.nodes
+      }
+    else
+      state = {
+        state...
+        neurons: data.neurons
+        network: muramatorNetwork state.kt, state.kf, data.neurons
+      }
 
-  if useSimpleNetwork
-    network = simpleNetwork()
-    state = {
-      state...
-      network: network
-      neurons: network.nodes
-    }
-  else
-    state = {
-      state...
-      neurons: data.neurons
-      network: muramatorNetwork state.kt, state.kf, this.neurons
-    }
+    view(state)
 
-  main(state)
+document.querySelectorAll('input[name=network-choice]').forEach (input) ->
+  input.onchange = =>
+    useSimpleNetwork = document.querySelector('input[name=network-choice]:checked').value == "0"
+    document.getElementsByTagName("svg").item(0)?.remove()
+    present()
 
-document.querySelectorAll('input[name=network-choice]').onchange = ->
-  useSimpleNetwork = document.querySelector('input[name=network-choice]:checked').value == 0
-  main(state)
+present()
