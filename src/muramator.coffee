@@ -86,7 +86,6 @@ simpleNetwork = ->
 state =
   kf: 20
   kt: 10
-  ticks: 0
   graphOn: true
   frameMillis: 200.0
 
@@ -151,13 +150,6 @@ view = (state) ->
       node.visited = false
   , state.frameMillis)
 
-  ticks = 0
-  clock = (n = null) ->
-    ->
-      ticks += 1
-      ticks %= 2
-      ticks
-
   if state.graphOn
     contextGraph = document.muramator.contextGraph
     watched = state.network.nodes[1]
@@ -166,14 +158,11 @@ view = (state) ->
       () -> watched.input_agg
     )
 
-    # graphTick = contextGraph(clock())
     graphTick()
 
-  # window.network = state.network
-  #
-  # setTimeout(->
-  #   clearInterval(simulationStep)
-  # ,20000)
+  setTimeout(->
+    clearInterval(simulationStep)
+  ,15000)
 
 present = ->
   fetch('neurons.json').then((response) -> response.json()).then (data) ->
@@ -200,4 +189,5 @@ document.querySelectorAll('input[name=network-choice]').forEach (input) ->
     document.getElementsByTagName("svg").item(0)?.remove()
     present()
 
+document.forms[0].children[0].checked = true
 present()
