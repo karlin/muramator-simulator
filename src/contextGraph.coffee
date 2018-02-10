@@ -1,7 +1,6 @@
 document.muramator.contextGraph = (valueFunc) ->
   n = 40
   data = d3.range(n).map((x) -> valueFunc())
-  console.log(data)
   margin =
     top: 5
     right: 5
@@ -36,17 +35,19 @@ document.muramator.contextGraph = (valueFunc) ->
 
   label = graph_root.append('text')
     .attr('class', 'func-label')
-    .attr('transform', "translate(0,20)")
+    .attr('transform', "translate(0,10)")
 
   tick = ->
     value = valueFunc()
     data.push value
     graph.attr("d", line)
-      .attr("transform", "")
+      # .attr("transform", "")
       .transition()
-      .duration(100)
+      .delay(100)
+
       # .ease("linear")
       .attr("transform", "translate(#{x(0)})")
+      # .duration(200)
       .each("end", tick)
     # TODO graph labels
     label.text("#{labelFmt(value)}")

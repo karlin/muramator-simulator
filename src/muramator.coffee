@@ -93,13 +93,9 @@ state =
 inputsFor = (network, node) ->
   link for link in network.links when link.target == node
 
-fetch('neurons.json').then((response) -> response.json()).then (data) ->
+useSimpleNetwork = true
 
-  state.neurons = data.neurons
-  state.network = muramatorNetwork state.kt, state.kf, state.neurons
-  # network = simpleNetwork()
-  # state.neurons = network.nodes
-
+main = (state) ->
   neuronGraph = document.muramator.neuronGraph
   updateNode = neuronGraph(state.network)
 
@@ -118,7 +114,7 @@ fetch('neurons.json').then((response) -> response.json()).then (data) ->
         n.active = true if n.input_agg >= 1.0
         n.active = false if n.input_agg == 0.0
         n.output = if n.active then 1 else 0
-        n.input_agg = Math.max(0, n.input_agg - 0.001)
+        n.input_agg = Math.max(0, n.input_agg - 0.01)
 
   debugFmt = d3.format("0.2f")
 
@@ -149,7 +145,7 @@ fetch('neurons.json').then((response) -> response.json()).then (data) ->
         weight = link.weight * source.output
         link.target.input_agg = Math.min(1, Math.max(0, link.target.input_agg + (weight * rate)))
 
-    reportNodes(state.network, debugFmt)
+    # reportNodes(state.network, debugFmt)
 
     _.each state.network.nodes, (node) =>
       node.visited = false
@@ -164,14 +160,35 @@ fetch('neurons.json').then((response) -> response.json()).then (data) ->
 
   if state.graphOn
     contextGraph = document.muramator.contextGraph
-    # graphTick = contextGraph(() -> state.network.nodes[10].input_agg)
+    graphTick = contextGraph(() -> state.network.nodes[1].input_agg)
 
-    graphTick = contextGraph(clock())
+    # graphTick = contextGraph(clock())
     graphTick()
 
-  window.network = state.network
+  # window.network = state.network
 
   setTimeout(->
     clearInterval(simulationStep)
-
   ,20000)
+
+fetch('neurons.json').then((response) -> response.json()).then (data) ->
+
+  if useSimpleNetwork
+    network = simpleNetwork()
+    state = {
+      state...
+      network: network
+      neurons: network.nodes
+    }
+  else
+    state = {
+      state...
+      neurons: data.neurons
+      network: muramatorNetwork state.kt, state.kf, this.neurons
+    }
+
+  main(state)
+
+document.querySelectorAll('input[name=network-choice]').onchange = ->
+  useSimpleNetwork = document.querySelector('input[name=network-choice]:checked').value == 0
+  main(state)

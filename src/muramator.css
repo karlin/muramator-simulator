@@ -1,5 +1,7 @@
 body {
   background-color: black;
+  color: white;
+  font-family: Helvetica Neue, sans-serif;
 }
 
 circle.inactive {
@@ -61,7 +63,7 @@ marker#inh {
 
 #graph path { fill: none; stroke: red;}
 #graph .func-label  {
-  fill: #bbb;
+  fill: #222;
   font: 10px sans-serif;
 }
 

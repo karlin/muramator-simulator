@@ -1,5 +1,4 @@
 gulp = require("gulp")
-gutil = require("gulp-util")
 sourcemaps = require("gulp-sourcemaps")
 concat = require("gulp-concat")
 coffee = require("gulp-coffee")

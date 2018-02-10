@@ -85,9 +85,9 @@ document.muramator.neuronGraph = (network) ->
     .text((n) -> n.name)
   circle.on 'contextmenu', ->
     d3.event.preventDefault()
-    weeGraph = d3.select('#graph')
-    coords = d3.mouse(weeGraph[0].parentNode)
-    weeGraph.attr("transform", "translate(#{coords[0]},#{coords[1]})")
+    contextGraph = d3.select('#graph')
+    coords = d3.mouse(contextGraph[0].parentNode)
+    contextGraph.attr("transform", "translate(#{coords[0]},#{coords[1]})")
     false
 
   node.append("text")
