@@ -83,12 +83,6 @@ simpleNetwork = ->
   nodes: neurons
   links: dendrites
 
-state =
-  kf: 20
-  kt: 10
-  graphOn: true
-  frameMillis: 200.0
-
 inputsFor = (network, node) ->
   link for link in network.links when link.target == node
 
@@ -153,48 +147,48 @@ view = (state) ->
       node.visited = 0
   , state.frameMillis)
 
-  if state.graphOn
-    contextGraph = document.muramator.contextGraph
-    watched = state.network.nodes[0]
-    graphTick = contextGraph(
-      watched.name,
-      () -> watched.input_agg
-    )
+  # window.network = state.network
 
-    graphTick()
+  if state.endSimulationTime?
+    setTimeout(->
+      clearInterval(simulationStep)
+    , state.endSimulationTime)
 
-  window.network = state.network
-
-  setTimeout(->
-    clearInterval(simulationStep)
-  ,20000)
-
-present = (useSimpleNetwork) ->
+chooseMuramatorNetwork = (present, state) ->
   fetch('neurons.json').then((response) -> response.json()).then (data) ->
+    state.kf = 20
+    state.kt = 10
+    state.neurons = data.neurons
+    state.network = muramatorNetwork state.kt, state.kf, data.neurons
+    present(state)
 
-    if useSimpleNetwork
-      network = simpleNetwork()
-      state = {
-        state...
-        network: network
-        neurons: network.nodes
-      }
-    else
-      state = {
-        state...
-        neurons: data.neurons
-        network: muramatorNetwork state.kt, state.kf, data.neurons
-      }
+chooseSimpleNetwork = (present, state) ->
+  network = simpleNetwork()
+  state.network = network
+  state.neurons = network.nodes
+  present(state)
 
-    view(state)
-
-document.querySelectorAll('input[name=network-choice]').forEach (input) ->
-  input.onchange = ->
+networkSelectionAction = (present, state) ->
+  ->
     document.getElementsByTagName("svg").item(0)?.remove()
-    if document.querySelector('input[name=network-choice]:checked').value == "0"
-      present(true)
+    if document.querySelector('input[name=network-choice]:checked').value == "osc"
+      chooseSimpleNetwork(present, state)
     else
-      present(false)
+      chooseMuramatorNetwork(present, state)
 
-document.forms[0].children[1].checked = true
-present(false)
+selectDefaultNetwork = ->
+  document.forms[0].children[1].checked = true
+
+state =
+  frameMillis: 200.0
+  endSimulationTime: 40000
+  running: true
+
+setNetworkOptions = (doc, view, state) ->
+  doc.querySelectorAll('input[name=network-choice]').forEach((input) =>
+    input.onchange = networkSelectionAction(view, state)
+  )
+
+setNetworkOptions(document, view, state)
+selectDefaultNetwork()
+networkSelectionAction(view, state)()

@@ -73,3 +73,9 @@ marker#inh {
   stroke-width: 1;
   opacity: 0.8;
 }
+
+input {
+  margin-right: 1em;
+  vertical-align: bottom;
+  margin-top: 0.5rem;
+}

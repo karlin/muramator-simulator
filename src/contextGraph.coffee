@@ -31,7 +31,6 @@ document.muramator.contextGraph = (name, valueFunc) ->
     .append("path").data([ data ])
     .attr("class", "graph")
     .attr("d", line)
-  # graph.on 'mousedown', ->
 
   label = graph_root.append('text')
     .attr('class', 'func-label')
@@ -41,15 +40,13 @@ document.muramator.contextGraph = (name, valueFunc) ->
     value = valueFunc()
     data.push value
     graph.attr("d", line)
-      # .attr("transform", "")
+      .attr("transform", "")
       .transition()
-      .delay(100)
-
-      # .ease("linear")
+      .duration(100)
+      .ease("linear")
       .attr("transform", "translate(#{x(0)})")
-      # .duration(200)
+      .duration(100)
       .each("end", tick)
-    # TODO graph labels
     label.text("#{name}: #{labelFmt(value)}")
     data.shift()
 

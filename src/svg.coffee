@@ -2,9 +2,9 @@ document.muramator.neuronGraph = (network) ->
   nodes = network.nodes
   links = network.links
 
-  w = 500
-  h = 350
-  r = 20
+  w = 600
+  h = 500
+  r = 30
   markerPath = "M 4.73,-6.26 5.08,-1.43 7.05,3.47 0,0z"
 
   svg = d3.select("body").append("svg")
@@ -13,22 +13,22 @@ document.muramator.neuronGraph = (network) ->
 
   svg.append("defs").append("marker")
     .attr("id", "inh")
-    .attr("viewBox", "0 -7 10 10")
-    .attr("refX", 21.6)
-    .attr("refY", -3)
-    .attr("markerWidth", 8)
-    .attr("markerHeight", 8)
+    .attr("viewBox", "0 -8 12 12")
+    .attr("refX", 18)
+    .attr("refY", -2.76)
+    .attr("markerWidth", 10)
+    .attr("markerHeight", 10)
     .attr("orient", "auto")
     .append("path")
     .attr("d", markerPath)
 
   svg.select("defs").append("marker")
     .attr("id", "exc")
-    .attr("viewBox", "0 -7 10 10")
-    .attr("refX", 21.6)
-    .attr("refY", -3)
-    .attr("markerWidth", 8)
-    .attr("markerHeight", 8)
+    .attr("viewBox", "0 -8 12 12")
+    .attr("refX", 18)
+    .attr("refY", -2.76)
+    .attr("markerWidth", 10)
+    .attr("markerHeight", 10)
     .attr("orient", "auto")
     .append("path")
     .attr("d", markerPath)
@@ -83,11 +83,16 @@ document.muramator.neuronGraph = (network) ->
     .attr("fill", '#f88')
   circle.append('title')
     .text((n) -> n.name)
-  circle.on 'contextmenu', ->
+
+  circle.on 'contextmenu', (neuron) ->
     d3.event.preventDefault()
-    contextGraph = d3.select('#graph')
-    coords = d3.mouse(contextGraph[0].parentNode)
-    contextGraph.attr("transform", "translate(#{coords[0]},#{coords[1]})")
+    document.querySelector('#graph')?.remove()
+    document.muramator.contextGraph(neuron.name, () -> neuron.input_agg)()
+
+    graphFrame = d3.select('#graph')
+    coords = d3.mouse(graphFrame[0].parentNode)
+    graphFrame.attr("transform", "translate(#{coords[0]},#{coords[1]})")
+
     false
 
   node.append("text")
@@ -101,11 +106,11 @@ document.muramator.neuronGraph = (network) ->
     .attr("text-anchor", "middle")
     .attr("class", "node-label")
     .text(nodeLabel).append('tspan')
-              .text((n)=> if n.cycle? then "#{n.cycle}ms" else '')
-              .attr("text-anchor", "middle")
-              .attr('dy', '1.1em')
-              .attr('x', '0px')
-              .attr('class', 'cycle-label')
+      .text((n)=> if n.cycle? then "#{n.cycle}ms" else '')
+      .attr("text-anchor", "middle")
+      .attr('dy', '1.1em')
+      .attr('x', '0px')
+      .attr('class', 'cycle-label')
 
   text.attr("x", (d) -> (d.source.x + d.target.x) / 2)
     .attr("y", (d) -> (d.source.y + d.target.y) / 2)
