@@ -22,7 +22,7 @@ document.muramator.neuronGraph = (network) ->
     .append("path")
     .attr("d", markerPath)
 
-  svg.append("defs").append("marker")
+  svg.select("defs").append("marker")
     .attr("id", "exc")
     .attr("viewBox", "0 -7 10 10")
     .attr("refX", 21.6)
@@ -38,7 +38,7 @@ document.muramator.neuronGraph = (network) ->
     .links(links)
     .size([w, h])
     .linkDistance((d) -> if d.size? then d.size else r*5)
-    .charge(-r*12)
+    .charge(-r*14)
     .start()
 
   text = svg.selectAll("text.weight-label")
@@ -53,12 +53,12 @@ document.muramator.neuronGraph = (network) ->
     "url(##{if l.weight < 0 then "inh" else "exc"})"
 
   path = svg.append("g").selectAll("path")
-    .data(links)
+    .data(links.filter((l)->l.source != l.target))
     .enter().append("path")
     .attr("class", "link")
     .attr("marker-end", linkMarker)
 
-  path2 = svg.append("g").selectAll("path")
+  path2 = svg.append("g").attr("class", "self-links").selectAll("path")
     .data(links.filter((l)->l.source == l.target)) # self-links
     .enter().append("path")
     .attr("class", "link")

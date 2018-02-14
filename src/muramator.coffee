@@ -92,8 +92,6 @@ state =
 inputsFor = (network, node) ->
   link for link in network.links when link.target == node
 
-useSimpleNetwork = true
-
 view = (state) ->
   neuronGraph = document.muramator.neuronGraph
   updateNode = neuronGraph(state.network)
@@ -104,6 +102,7 @@ view = (state) ->
   state.neurons.forEach (n) ->
     n.active = false # always initially off
     n.input_agg = 0.0
+    n.visited = 0
     if n.allTheTime
       n.fn = =>
         n.active = true
@@ -133,26 +132,30 @@ view = (state) ->
     updateNode.selectAll('.link').attr('stroke', (d) ->
       if d.source.active then "#f88" else "#aaa")
 
+    # not very efficient!
     _.each state.network.links, (link) =>
       source = link.source
       target = link.target
-      if (target == source or !target.visited) and target.cycle? and !target.allTheTime
-        target.visited = true
-        rate = state.frameMillis / target.cycle
+      if (target == source or target.visited < state.network.nodes.length - 1) and !target.allTheTime
+        target.visited += 1
+        if target.cycle?
+          rate = state.frameMillis / target.cycle
+        else
+          rate = 1.0
         # console.log("calculating inputs and activity for #{target.name}: #{debugFmt(rate)}")
-        # console.log(link.weight)
+        # console.log(rate)
         weight = link.weight * source.output
         link.target.input_agg = Math.min(1, Math.max(0, link.target.input_agg + (weight * rate)))
 
     # reportNodes(state.network, debugFmt)
 
-    _.each state.network.nodes, (node) =>
-      node.visited = false
+    _.each state.network.nodes, (node) ->
+      node.visited = 0
   , state.frameMillis)
 
   if state.graphOn
     contextGraph = document.muramator.contextGraph
-    watched = state.network.nodes[1]
+    watched = state.network.nodes[0]
     graphTick = contextGraph(
       watched.name,
       () -> watched.input_agg
@@ -160,11 +163,13 @@ view = (state) ->
 
     graphTick()
 
+  window.network = state.network
+
   setTimeout(->
     clearInterval(simulationStep)
-  ,15000)
+  ,20000)
 
-present = ->
+present = (useSimpleNetwork) ->
   fetch('neurons.json').then((response) -> response.json()).then (data) ->
 
     if useSimpleNetwork
@@ -184,10 +189,12 @@ present = ->
     view(state)
 
 document.querySelectorAll('input[name=network-choice]').forEach (input) ->
-  input.onchange = =>
-    useSimpleNetwork = document.querySelector('input[name=network-choice]:checked').value == "0"
+  input.onchange = ->
     document.getElementsByTagName("svg").item(0)?.remove()
-    present()
+    if document.querySelector('input[name=network-choice]:checked').value == "0"
+      present(true)
+    else
+      present(false)
 
-document.forms[0].children[0].checked = true
-present()
+document.forms[0].children[1].checked = true
+present(false)
