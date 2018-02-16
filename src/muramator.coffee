@@ -25,7 +25,7 @@ muramatorNetwork = (kf, kt, neurons) ->
     ,
       source: named('seek_ex')
       target: named('seek')
-      size: 70
+      size: 100
       weight: kf
     ,
       source: named('seek')
@@ -43,7 +43,7 @@ muramatorNetwork = (kf, kt, neurons) ->
       source: named('explore_ex')
       target: named('av_supp_ex')
       weight: 2
-      size: 70
+      size: 100
     ,
       source: named('av_supp_ex')
       target: named('forward')
@@ -51,7 +51,7 @@ muramatorNetwork = (kf, kt, neurons) ->
     ,
       source: named('emit_ex')
       target: named('emitter')
-      size: 70
+      size: 100
       weight: 2
     ,
       source: named('emitter')

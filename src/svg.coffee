@@ -11,27 +11,23 @@ document.muramator.neuronGraph = (network) ->
     .attr("width", w)
     .attr("height", h);
 
-  svg.append("defs").append("marker")
-    .attr("id", "inh")
-    .attr("viewBox", "0 -8 12 12")
-    .attr("refX", 18)
-    .attr("refY", -2.76)
-    .attr("markerWidth", 10)
-    .attr("markerHeight", 10)
+  makeMarker = (node) ->
+    node.attr("viewBox", "-2 -10 16 16")
+    .attr("refX", r*0.52)
+    .attr("refY", -3)
+    .attr("markerWidth", 16)
+    .attr("markerHeight", 16)
     .attr("orient", "auto")
     .append("path")
     .attr("d", markerPath)
 
+  svg.append("defs").append("marker")
+    .attr("id", "inh")
+    .call(makeMarker)
+
   svg.select("defs").append("marker")
     .attr("id", "exc")
-    .attr("viewBox", "0 -8 12 12")
-    .attr("refX", 18)
-    .attr("refY", -2.76)
-    .attr("markerWidth", 10)
-    .attr("markerHeight", 10)
-    .attr("orient", "auto")
-    .append("path")
-    .attr("d", markerPath)
+    .call(makeMarker)
 
   force = d3.layout.force()
     .nodes(nodes)
@@ -80,7 +76,6 @@ document.muramator.neuronGraph = (network) ->
 
   circle = node.append("circle")
     .attr("r", nodeSize)
-    .attr("fill", '#f88')
   circle.append('title')
     .text((n) -> n.name)
 
