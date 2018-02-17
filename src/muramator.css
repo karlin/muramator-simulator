@@ -6,13 +6,13 @@ body {
 
 circle.inactive {
   fill: #ffffd4;
-  stroke: #fed98e;
+  stroke: #cc4c02;
   stroke-width: 1.5px;
 }
 
 circle.active {
   fill: #fe9929;
-  stroke: #cc4c02;
+  stroke: #fed98e;
   stroke-width: 3px;
 }
 

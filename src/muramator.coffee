@@ -147,7 +147,7 @@ view = (state) ->
       node.visited = 0
   , state.frameMillis)
 
-  # window.network = state.network
+  window.network = state.network
 
   if state.endSimulationTime?
     setTimeout(->
