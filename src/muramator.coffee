@@ -10,7 +10,7 @@ muramatorNetwork = (kf, kt, neurons) ->
       target: named('detect_obs')
       weight: 8
     ,
-      label: named('avoid')
+      label: 'avoid'
       source: named('detect_obs')
       target: named('sk_supp_av')
       weight: 2
@@ -62,10 +62,10 @@ muramatorNetwork = (kf, kt, neurons) ->
   nodes: neurons
   links: dendrites
 
-connect = (n1, n2, params) =>
+connect = (source, target, params) ->
   dendrite =
-    source: n1
-    target: n2
+    source: source
+    target: target
   for param of params
     dendrite[param] = params[param]
   dendrite
@@ -103,10 +103,10 @@ view = (state) ->
         n.output = 1
     else
       n.fn = =>
-        n.active = true if n.input_agg >= 1.0
-        n.active = false if n.input_agg == 0.0
+        n.active = true if Math.abs(1.0 - n.input_agg) < state.epsilon
+        n.active = false if Math.abs(0.0 - n.input_agg) < state.epsilon
         n.output = if n.active then 1 else 0
-        n.input_agg = Math.max(0, n.input_agg - 0.01)
+        n.input_agg = Math.max(0, n.input_agg - (state.frameMillis / 1000))
 
   debugFmt = d3.format("0.2f")
 
@@ -118,7 +118,7 @@ view = (state) ->
     console.log "===\nNAME\t\tINPUT\tOUTPUT\tACTIVE\n"
     console.log report
 
-  simulationStep = setInterval((ticks) ->
+  simulationStep = setInterval ->
     n.fn() for n in state.network.nodes
 
     updateNode.selectAll('circle').attr('class', (d) ->
@@ -126,26 +126,27 @@ view = (state) ->
     updateNode.selectAll('.link').attr('stroke', (d) ->
       if d.source.active then "#f88" else "#aaa")
 
-    # not very efficient!
-    _.each state.network.links, (link) =>
+    # console.log("=====================")
+    for link in state.network.links
       source = link.source
       target = link.target
-      if (target == source or target.visited < state.network.nodes.length - 1) and !target.allTheTime
-        target.visited += 1
+
+      if target.visited < state.network.nodes.length - 1 and !target.allTheTime
         if target.cycle?
+          target.visited += 1
           rate = state.frameMillis / target.cycle
         else
-          rate = 1.0
-        # console.log("calculating inputs and activity for #{target.name}: #{debugFmt(rate)}")
-        # console.log(rate)
+          rate = state.frameMillis / 1000.0
         weight = link.weight * source.output
+        # console.log("calculating inputs and activity for #{target.name}: #{debugFmt(link.target.input_agg)} +  #{debugFmt(weight)} * #{debugFmt(rate)}")
         link.target.input_agg = Math.min(1, Math.max(0, link.target.input_agg + (weight * rate)))
+        # console.log("link [#{source.name}] -> [#{target.name}] (#{target.visited})")
 
     # reportNodes(state.network, debugFmt)
 
-    _.each state.network.nodes, (node) ->
-      node.visited = 0
-  , state.frameMillis)
+    node.visited = 0 for node in state.network.nodes
+
+  , state.frameMillis
 
   window.network = state.network
 
@@ -183,9 +184,10 @@ state =
   frameMillis: 200.0
   endSimulationTime: 40000
   running: true
+  epsilon: 0.0001
 
 setNetworkOptions = (doc, view, state) ->
-  doc.querySelectorAll('input[name=network-choice]').forEach((input) =>
+  doc.querySelectorAll('input[name=network-choice]').forEach((input) ->
     input.onchange = networkSelectionAction(view, state)
   )
 

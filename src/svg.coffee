@@ -13,7 +13,7 @@ document.muramator.neuronGraph = (network) ->
 
   makeMarker = (node) ->
     node.attr("viewBox", "-2 -10 16 16")
-    .attr("refX", r*0.52)
+    .attr("refX", r * 0.52)
     .attr("refY", -3)
     .attr("markerWidth", 16)
     .attr("markerHeight", 16)
@@ -33,8 +33,8 @@ document.muramator.neuronGraph = (network) ->
     .nodes(nodes)
     .links(links)
     .size([w, h])
-    .linkDistance((d) -> if d.size? then d.size else r*5)
-    .charge(-r*14)
+    .linkDistance((d) -> if d.size? then d.size else r * 5)
+    .charge(-r * 14)
     .start()
 
   text = svg.selectAll("text.weight-label")
@@ -72,7 +72,7 @@ document.muramator.neuronGraph = (network) ->
     if n.allTheTime then (r * 0.5) else r
 
   nodeLabel = (n) =>
-    if n.allTheTime then '*' else n.name
+    if n.allTheTime then "#{n.name}*" else n.name
 
   circle = node.append("circle")
     .attr("r", nodeSize)
@@ -110,7 +110,7 @@ document.muramator.neuronGraph = (network) ->
   text.attr("x", (d) -> (d.source.x + d.target.x) / 2)
     .attr("y", (d) -> (d.source.y + d.target.y) / 2)
     .attr("text-anchor", "middle")
-    .text (t) -> "#{t.weight}"
+    .text (t) -> "#{t.weight} #{t.label ? ""}"
 
   force.on "tick", ->
     path.attr "d", (d) ->

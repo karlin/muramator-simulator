@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/karlin/muramator-simulator",
   "devDependencies": {
-    "coffeescript": "*",
+    "coffeescript@next": "*",
     "connect": "*",
     "del": "*",
     "gulp": "*",
