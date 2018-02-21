@@ -92,30 +92,35 @@ view = (state) ->
 
   inputsOf = _.partial inputsFor, state.network
 
+  input_scale = d3.scale.linear().clamp(true)
+  drain = -1 # state.frameMillis / 1000.0
+
   # Set up state and activation functions
   state.neurons.forEach (n) ->
     n.active = false # always initially off
-    n.input_agg = 0.0
+    n.input_agg ?= 0.0
     n.visited = 0
     if n.allTheTime
       n.fn = =>
         n.active = true
+        n.input_agg = 1.0
         n.output = 1
     else
       n.fn = =>
+        n.input_agg_v = 0.0
         n.active = true if Math.abs(1.0 - n.input_agg) < state.epsilon
         n.active = false if Math.abs(0.0 - n.input_agg) < state.epsilon
         n.output = if n.active then 1 else 0
-        n.input_agg = Math.max(0, n.input_agg - (state.frameMillis / 1000))
+        # n.input_agg = input_scale(n.input_agg - drain)
 
   debugFmt = d3.format("0.2f")
 
   reportNodes = (network, fmt) ->
     eachNode = state.network.nodes.map (n) ->
-      "#{n.name}:\t#{if n.name.length < 7 then "\t" else ""} #{debugFmt(n.input_agg)}\t#{debugFmt(n.output)}\t#{n.active}"
+      "#{n.name}:\t#{if n.name.length < 7 then "\t" else ""} #{debugFmt(n.input_agg)}\t#{debugFmt(n.output)}\t#{n.cycle ? '-'}"
 
     report = eachNode.reduce (s, n) -> "#{s}\n#{n}"
-    console.log "===\nNAME\t\tINPUT\tOUTPUT\tACTIVE\n"
+    console.log "===\nNAME\t\tINPUT\tOUTPUT\tCYCLE?\n"
     console.log report
 
   simulationStep = setInterval ->
@@ -126,25 +131,29 @@ view = (state) ->
     updateNode.selectAll('.link').attr('stroke', (d) ->
       if d.source.active then "#f88" else "#aaa")
 
+    dt = state.frameMillis / 1000.0
+
     # console.log("=====================")
-    for link in state.network.links
+    for link in state.network.links when !link.target.allTheTime
       source = link.source
       target = link.target
 
-      if target.visited < state.network.nodes.length - 1 and !target.allTheTime
+      if target.visited < state.network.nodes.length - 1
+
         if target.cycle?
           target.visited += 1
-          rate = state.frameMillis / target.cycle
-        else
-          rate = state.frameMillis / 1000.0
+
         weight = link.weight * source.output
-        # console.log("calculating inputs and activity for #{target.name}: #{debugFmt(link.target.input_agg)} +  #{debugFmt(weight)} * #{debugFmt(rate)}")
-        link.target.input_agg = Math.min(1, Math.max(0, link.target.input_agg + (weight * rate)))
-        # console.log("link [#{source.name}] -> [#{target.name}] (#{target.visited})")
+        target.input_agg_v += weight * dt
+        console.log("link [#{source.name}] -> [#{target.name}] (#{target.visited}): #{debugFmt(link.weight)} * #{debugFmt(source.output)} * #{debugFmt(dt)} = #{debugFmt(link.target.input_agg_v)}")
 
-    # reportNodes(state.network, debugFmt)
 
-    node.visited = 0 for node in state.network.nodes
+    for node in state.network.nodes when !node.allTheTime
+      node.visited = 0
+      node.input_agg_v += drain
+      console.log(node.input_agg_v)
+      node.input_agg = input_scale(node.input_agg + (node.input_agg_v))
+    reportNodes(state.network, debugFmt)
 
   , state.frameMillis
 
@@ -182,7 +191,7 @@ selectDefaultNetwork = ->
 
 state =
   frameMillis: 200.0
-  endSimulationTime: 40000
+  endSimulationTime: 10000
   running: true
   epsilon: 0.0001
 
