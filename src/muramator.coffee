@@ -6,7 +6,7 @@ muramatorNetwork = (kf, kt, neurons) ->
       n.name == name
 
   dendrites = [
-      source: named('detector')
+      source: named('emitter')
       target: named('detect_obs')
       weight: 8
     ,
@@ -83,45 +83,58 @@ simpleNetwork = ->
   nodes: neurons
   links: dendrites
 
-inputsFor = (network, node) ->
-  link for link in network.links when link.target == node
+debugFmt = d3.format("0.2f")
 
-view = (state) ->
-  neuronGraph = document.muramator.neuronGraph
-  updateNode = neuronGraph(state.network)
+reportNodes = (nodes, fmt) ->
+  eachNode = nodes.map (n) ->
+    "#{n.name}:\t#{if n.name.length < 7 then "\t" else ""} #{debugFmt(n.input_agg)}\t#{debugFmt(n.output)}\t#{n.cycle ? '-'}"
 
-  inputsOf = _.partial inputsFor, state.network
+  report = eachNode.reduce (s, n) -> "#{s}\n#{n}"
+  console.log "===\nNAME\t\tINPUT\tOUTPUT\tCYCLE?\n"
+  console.log report
 
-  input_scale = d3.scale.linear().clamp(true)
-  drain = -1 # state.frameMillis / 1000.0
+# SIMULATION
 
-  # Set up state and activation functions
+simulator = (neuronGraph) -> (state) ->
+  updateNode = neuronGraph state.network
+
+  input_scale = d3.scale.linear().clamp true
+  drain = -1
+
+  # Setup state and activation functions
   state.neurons.forEach (n) ->
     n.active = false # always initially off
     n.input_agg ?= 0.0
+    n.cycle_timer ?= 0 if n.cycle?
     n.visited = 0
     if n.allTheTime
       n.fn = =>
         n.active = true
         n.input_agg = 1.0
-        n.output = 1
+        n.output = 1.0
     else
       n.fn = =>
         n.input_agg_v = 0.0
-        n.active = true if Math.abs(1.0 - n.input_agg) < state.epsilon
-        n.active = false if Math.abs(0.0 - n.input_agg) < state.epsilon
+
+        activating = Math.abs(1.0 - n.input_agg) < state.epsilon
+        deactivating = Math.abs(0.0 - n.input_agg) < state.epsilon
+
+        if activating
+          if n.cycle?
+            # cycle is "how long it takes for the neuron to fully charge
+            #   with an input sum of 1."
+            n.cycle_timer += state.frameMillis
+            if n.cycle_timer >= n.cycle
+              n.active = true
+              n.cycle_timer = 0
+          else
+            # otherwise activate now
+            n.active = true
+
+        if deactivating
+          n.active = false
+
         n.output = if n.active then 1 else 0
-        # n.input_agg = input_scale(n.input_agg - drain)
-
-  debugFmt = d3.format("0.2f")
-
-  reportNodes = (network, fmt) ->
-    eachNode = state.network.nodes.map (n) ->
-      "#{n.name}:\t#{if n.name.length < 7 then "\t" else ""} #{debugFmt(n.input_agg)}\t#{debugFmt(n.output)}\t#{n.cycle ? '-'}"
-
-    report = eachNode.reduce (s, n) -> "#{s}\n#{n}"
-    console.log "===\nNAME\t\tINPUT\tOUTPUT\tCYCLE?\n"
-    console.log report
 
   simulationStep = setInterval ->
     n.fn() for n in state.network.nodes
@@ -130,10 +143,11 @@ view = (state) ->
       if d.active then "active" else "inactive")
     updateNode.selectAll('.link').attr('stroke', (d) ->
       if d.source.active then "#f88" else "#aaa")
+    updateNode.selectAll('text.weight-label').text (t) ->
+      "#{t.weight} #{t.label ? ""}"
 
     dt = state.frameMillis / 1000.0
 
-    # console.log("=====================")
     for link in state.network.links when !link.target.allTheTime
       source = link.source
       target = link.target
@@ -144,19 +158,20 @@ view = (state) ->
           target.visited += 1
 
         weight = link.weight * source.output
-        target.input_agg_v += weight * dt
-        console.log("link [#{source.name}] -> [#{target.name}] (#{target.visited}): #{debugFmt(link.weight)} * #{debugFmt(source.output)} * #{debugFmt(dt)} = #{debugFmt(link.target.input_agg_v)}")
+        target.input_agg_v += weight
 
 
     for node in state.network.nodes when !node.allTheTime
       node.visited = 0
       node.input_agg_v += drain
-      console.log(node.input_agg_v)
-      node.input_agg = input_scale(node.input_agg + (node.input_agg_v))
-    reportNodes(state.network, debugFmt)
+      node.input_agg_v *= dt
+      node.input_agg = input_scale(node.input_agg + node.input_agg_v)
+
+    reportNodes(state.network.nodes, debugFmt) if state.reportOn
 
   , state.frameMillis
 
+  # for manual tweaking from console:
   window.network = state.network
 
   if state.endSimulationTime?
@@ -178,28 +193,54 @@ chooseSimpleNetwork = (present, state) ->
   state.neurons = network.nodes
   present(state)
 
-networkSelectionAction = (present, state) ->
-  ->
-    document.getElementsByTagName("svg").item(0)?.remove()
-    if document.querySelector('input[name=network-choice]:checked').value == "osc"
-      chooseSimpleNetwork(present, state)
-    else
-      chooseMuramatorNetwork(present, state)
+# GUI
 
-selectDefaultNetwork = ->
-  document.forms[0].children[1].checked = true
+networkSelectionAction = (doc, presenter, state) ->
+  ->
+    doc.getElementsByTagName("svg").item(0)?.remove()
+    if doc.querySelector('input[name=network-choice]:checked').value == "osc"
+      chooseSimpleNetwork(presenter, state)
+    else
+      chooseMuramatorNetwork(presenter, state)
+
+reportSelectionAction = (state) ->
+  ->
+    if doc.querySelector('input[name=report]').checked
+      state.reportOn = true
+    else
+      state.reportOn = false
+
+simControlAction = (state) ->
+  ->
+    if doc.querySelector('input[name=simulate]').checked
+      state.running = true
+    else
+      state.running = false
+
+selectDefaultNetwork = (doc) ->
+  input = doc.querySelectorAll('input[name=network-choice]').item(1)
+  input.checked = true
+
+setNetworkOptions = (doc, presenter, state) ->
+  doc.querySelectorAll('input[name=network-choice]').forEach (input) ->
+    input.onchange = networkSelectionAction(presenter, state)
+
+setReportControl = (doc, presenter, state) ->
+  doc.querySelectorAll('input[name=report]').forEach (input) ->
+    input.onchange = reportSelectionAction(presenter, state)
+
+# MAIN
 
 state =
-  frameMillis: 200.0
+  frameMillis: 100.0
   endSimulationTime: 10000
   running: true
+  reportOn: false
   epsilon: 0.0001
 
-setNetworkOptions = (doc, view, state) ->
-  doc.querySelectorAll('input[name=network-choice]').forEach((input) ->
-    input.onchange = networkSelectionAction(view, state)
-  )
-
-setNetworkOptions(document, view, state)
-selectDefaultNetwork()
-networkSelectionAction(view, state)()
+presenter = simulator document.muramator.neuronGraph
+setNetworkOptions document, presenter, state
+setReportControl document, presenter, state
+selectDefaultNetwork document
+networkSelectionAction(document, presenter, state)()
+# simControlAction document

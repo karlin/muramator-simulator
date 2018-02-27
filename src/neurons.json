@@ -1,6 +1,5 @@
 {
   "neurons": [
-    {"name": "detector",   "x": 100, "y": 100},
     {"name": "detect_obs", "x": 200, "y": 100, "cycle": 150},
     {"name": "sk_supp_av", "x": 300, "y": 100},
     {"name": "av_supp_ex", "x": 350, "y": 250},
