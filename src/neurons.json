@@ -1,0 +1,14 @@
+{
+  "neurons": [
+    {"name": "detect_obs", "x": 200, "y": 100, "cycle": 150},
+    {"name": "sk_supp_av", "x": 300, "y": 100},
+    {"name": "av_supp_ex", "x": 350, "y": 250},
+    {"name": "turn",       "x": 400, "y": 100},
+    {"name": "forward",    "x": 300, "y": 300},
+    {"name": "explore_ex", "x": 200, "y": 200, "allTheTime": true},
+    {"name": "seek",       "x": 150, "y": 150, "cycle": 5000},
+    {"name": "seek_ex",    "x": 100, "y": 280, "allTheTime": true},
+    {"name": "emit_ex",    "x": 50,  "y": 100, "allTheTime": true},
+    {"name": "emitter",    "x": 50,  "y": 200, "cycle": 60}
+  ]
+}

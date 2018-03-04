@@ -1,20 +1,31 @@
 gulp = require("gulp")
-gutil = require("gulp-util")
-concat = require("gulp-concat-sourcemap")
+sourcemaps = require("gulp-sourcemaps")
+concat = require("gulp-concat")
 coffee = require("gulp-coffee")
-open = require("open")
-connect = require("connect")
+watch = require('gulp-watch');
 plumber = require("gulp-plumber")
+connect = require("gulp-connect")
+del = require('del')
+open = require("open")
 http = require("http")
+
+gulp.task 'clean', ->
+  del './build'
 
 gulp.task "copy", ->
   gulp.src([
+    "./src/*.json"
     "./src/*.html"
     "./src/*.css"
-  ]).pipe gulp.dest("build")
+  ]).pipe(gulp.dest("build"))
 
 gulp.task "coffee", ->
-  gulp.src(["./src/**/*.coffee"]).pipe(plumber()).pipe(coffee()).pipe gulp.dest("./src")
+  gulp.src(["./src/**/*.coffee"])
+  .pipe(plumber())
+  .pipe(sourcemaps.init())
+  .pipe(coffee())
+  .pipe(sourcemaps.write())
+  .pipe(gulp.dest("./build/js"))
 
 gulp.task "default", [
   "coffee"
@@ -22,46 +33,25 @@ gulp.task "default", [
 ], ->
   gulp.src([
     "./lib/**/*.js"
-    "./src/**/*.js"
-  ]).pipe(concat("all.js")).pipe gulp.dest("./build/")
+    # "./build/js/**.js"
+  ])
+  # .pipe(concat("all.js", {prefix: 2}))
+  .pipe(gulp.dest("./build/"))
+  .pipe(connect.reload())
 
-gulp.task "watch", ->
-  gulp.watch "./src/**/*.html", ["default"]
-  gulp.watch "./src/**/*.js", ["default"]
-  gulp.watch "./lib/**/*.js", ["default"]
-  gulp.watch "./src/**/*.coffee", ["coffee"]
+gulp.task 'html', ->
+  gulp.src('./build/*.html')
+    .pipe(connect.reload())
 
-gulp.task "server", ["watch"], (callback) ->
-  # devApp = undefined
-  # devServer = undefined
-  # devAddress = undefined
-  # devHost = undefined
-  # url = undefined
-  log = gutil.log
-  colors = gutil.colors
-  devApp = connect()
-    .use connect.logger("dev")
-    .use connect.static("build")
+gulp.task 'watch:src', ->
+  gulp.watch [
+    './src/**/*.coffee'
+    './src/**/*.html'
+    './src/**/*.css'
+  ], ['default']
 
-  # change port and hostname to something static if you prefer
-  devServer = http.createServer(devApp).listen(0) #, hostname
-  devServer.on "error", (error) ->
-    log colors.underline(colors.red("ERROR")) + " Unable to start server!"
-    callback error
+gulp.task 'serve', ['default'], ->
+  connect.server
+    livereload: true
 
-  devServer.on "listening", ->
-    devAddress = devServer.address()
-    devHost = (if devAddress.address is "0.0.0.0" then "localhost" else devAddress.address)
-    url = "http://" + devHost + ":" + devAddress.port + "/muramator.html"
-    log ""
-    log "Started dev server at " + colors.magenta(url)
-    if gutil.env.open
-      log "Opening dev server URL in browser"
-      open url
-    else
-      log colors.gray("(Run with --open to automatically open URL on startup)")
-    log ""
-    callback()
-    return
-
-  return
+gulp.task 'watch', ['serve', 'watch:src']
