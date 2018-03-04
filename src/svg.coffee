@@ -82,7 +82,7 @@ document.muramator.neuronGraph = (network) ->
   circle.on 'contextmenu', (neuron) ->
     d3.event.preventDefault()
     document.querySelector('#graph')?.remove()
-    document.muramator.contextGraph(neuron.name, () -> neuron.input_agg)()
+    document.muramator.contextGraph(neuron.name, () -> neuron.inputAgg)()
 
     graphFrame = d3.select('#graph')
     coords = d3.mouse(graphFrame[0].parentNode)

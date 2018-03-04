@@ -4,20 +4,20 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>Muramator simulation</title>
   <script type="text/javascript">document.muramator = {};</script>
-  <script type="text/javascript" src="lodash.underscore.js"></script>
   <script type="text/javascript" src="d3.js"></script>
   <script type="text/javascript" src="js/contextGraph.js"></script>
   <script type="text/javascript" src="js/svg.js"></script>
+  <script type="text/javascript" src="js/muramator.js"></script>
   <link rel="stylesheet" type="text/css" href="muramator.css">
 </head>
 <body>
   <form>
-    <input type="checkbox" name="simulate">Simulate</input>
-    <input type="radio" name="network-choice" value="osc"/>Oscillator
-    <input type="radio" name="network-choice" value="muramator"/>Muramator<br/>
-    <input type="checkbox" name="report">Console Report</input>
+    <div>
+      <input type="checkbox" name="simulate" checked>Simulate</input>
+    </div>
+    <div>
+      <input type="checkbox" name="report">Console Report</input>
+    </div>
   </form>
 </body>
-<script type="text/javascript" src="js/muramator.js"></script>
-  <!-- <script type="text/javascript" src="all.js"></script> -->
 </html>
