@@ -149,4 +149,7 @@ document.muramator.neuronGraph = (network) ->
 
     nodeGroups.attr("transform", (d) -> "translate(#{d.x},#{d.y})")
 
+    setTimeout(->
+      force.stop()
+    , 1400)
   svg

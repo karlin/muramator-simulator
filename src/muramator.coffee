@@ -198,8 +198,8 @@ simulator = (neuronGraph) -> (state) ->
 
 showMuramatorNetwork = (present, state) ->
   fetch('neurons.json').then((response) -> response.json()).then (data) ->
-    state.kf = 4
-    state.kt = -4
+    state.kf = 6
+    state.kt = -10
     state.neurons = data.neurons
     state.network = muramatorNetwork state.kf, state.kt, data.neurons
     present state
@@ -246,8 +246,10 @@ setObstacleControl = (doc, state) ->
 
 # MAIN
 
+document.getElementsByTagName('form')[0].reset()
+
 state =
-  frameMillis: 100.0
+  frameMillis: 200.0
   # endSimulationTime: 10000
   running: true
   reportOn: false

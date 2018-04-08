@@ -57,22 +57,22 @@ path.link {
 
 path.inactive {
   stroke: var(--palette-white);
-  stroke-dasharray: none;
-  animation: none;
+  stroke-dasharray: 5;
+  /*animation: none;*/
 }
 
 path.active {
   stroke: var(--palette-white);
-  stroke-dasharray: 5;
-  animation: none;
+  stroke-dasharray: none;
+  /*animation: none;*/
 }
 
 path.exc.active {
-  animation: exc-anim 1s linear forwards infinite;
+  /*animation: exc-anim 1s linear forwards infinite;*/
 }
 
 path.inh.active {
-  animation: inh-anim 1s linear forwards infinite;
+  /*animation: inh-anim 1s linear forwards infinite;*/
 }
 
 @keyframes inh-anim {
