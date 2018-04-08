@@ -237,7 +237,6 @@ obstacleAction = (doc, state) ->
     for link in state.network.links when link.source.name == 'emitter' and link.target.name == 'detect_obs'
       obstacle = @checked
       link.weight = if obstacle then 8 else 0
-      presenter = simulator document.muramator.neuronGraph
 
 setObstacleControl = (doc, state) ->
   doc.querySelectorAll('input[name=obstacle]').forEach (input) ->
