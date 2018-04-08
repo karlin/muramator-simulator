@@ -50,10 +50,12 @@ muramatorNetwork = (kf, kt, neurons) ->
       target: named 'seek'
       size: 100
       weight: kf
+      label: 'KF'
     ,
       source: named 'seek'
       target: named 'seek'
-      weight: -kt
+      weight: kt
+      label: 'KT'
     ,
       source: named 'seek'
       target: named 'sk_supp_av'
@@ -196,10 +198,10 @@ simulator = (neuronGraph) -> (state) ->
 
 showMuramatorNetwork = (present, state) ->
   fetch('neurons.json').then((response) -> response.json()).then (data) ->
-    state.kf = 20
-    state.kt = 10
+    state.kf = 4
+    state.kt = -4
     state.neurons = data.neurons
-    state.network = muramatorNetwork state.kt, state.kf, data.neurons
+    state.network = muramatorNetwork state.kf, state.kt, data.neurons
     present state
 
 showSimpleNetwork = (present, state) ->
