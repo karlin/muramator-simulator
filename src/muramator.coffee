@@ -206,25 +206,35 @@ showSimpleNetwork = (present, state) ->
 
 reportSelectionAction = (doc, state) ->
   ->
-    if doc.querySelector('input[name=report]').checked
+    if @checked
       state.reportOn = true
     else
       state.reportOn = false
 
-setReportControl = (doc, presenter, state) ->
+setReportControl = (doc, state) ->
   doc.querySelectorAll('input[name=report]').forEach (input) ->
     input.onchange = reportSelectionAction doc, state
 
-simControlAction = (doc, presenter, state) ->
+simControlAction = (doc, state) ->
   ->
-    if doc.querySelector('input[name=simulate]').checked
+    if @checked
       state.running = true
     else
       state.running = false
 
-setSimulationControl = (doc, presenter, state) ->
-  doc.querySelectorAll('input[name=simulate]').forEach (input) ->
-    input.onchange = simControlAction doc, presenter, state
+setSimulationControl = (doc, state) ->
+  doc.querySelectorAll('input[name=obstacle]').forEach (input) ->
+    input.onchange = simControlAction doc, state
+
+obstacleAction = (doc, state) ->
+  ->
+    for link in state.network.links when link.source.name == 'emitter' and link.target.name == 'detect_obs'
+      obstacle = @checked
+      link.weight = if obstacle then 8 else 0
+
+setObstacleControl = (doc, state) ->
+  doc.querySelectorAll('input[name=obstacle]').forEach (input) ->
+    input.onchange = obstacleAction doc, state
 
 # MAIN
 
@@ -236,7 +246,8 @@ state =
   epsilon: 0.0001
 
 presenter = simulator document.muramator.neuronGraph
-setReportControl document, presenter, state
-setSimulationControl document, presenter, state
 showMuramatorNetwork presenter, state
+setReportControl document, state
+setSimulationControl document, state
+setObstacleControl document, state
 # showSimpleNetwork presenter, state
