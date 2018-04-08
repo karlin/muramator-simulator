@@ -1,78 +1,124 @@
 body {
-  background-color: black;
-  color: #fed98e;
+  --palette-red: #f65734;
+  --palette-white: #e5e5e5;
+  --palette-black: #000000;
+  --palette-dark: #333333;
+  --palette-light: #b0b0b0;
+  --palette-excitatory-stroke: #0b0;
+  --palette-excitatory-fill: #8f8;
+  --palette-inhibitory-stroke: #b00;
+  --palette-inhibitory-fill: #f88;
+
+  background-color: var(--palette-black);
+  color: var(--palette-white);
   font-family: Helvetica Neue, sans-serif;
-}
-
-circle.inactive {
-  fill: #ffffd4;
-  stroke: #cc4c02;
-  stroke-width: 1.5px;
-}
-
-circle.active {
-  fill: #fe9929;
-  stroke: #fed98e;
-  stroke-width: 3px;
-}
-
-text.node-label {
-  font: 8pt sans-serif;
-  pointer-events: none;
-  fill: #000;
-}
-
-tspan.cycle-label {
-  font: 6pt sans-serif;
-  fill: #333;
-}
-
-text.weight-label  {
-  fill: #bbb;
-  font: 10pt sans-serif;
-}
-
-path.link {
-  fill: none;
-  stroke-width: 2.5px;
-}
-
-text.shadow {
-  stroke: #ffffd4;
-  stroke-width: 3px;
-}
-
-marker#exc {
-  stroke: #0b0;
-  fill: #8f8;
-  stroke-width: 1px;
-}
-
-marker#inh {
-  stroke: #b00;
-  fill: #f88;
-  stroke-width: 1px;
-}
-
-#graph path {
-   fill: none;
-   stroke: red;
-}
-
-#graph .func-label  {
-  fill: #222;
-  font: 10px sans-serif;
-}
-
-#graph .graph-bg {
-  fill: white;
-  stroke: #ddd;
-  stroke-width: 2;
-  opacity: 0.8;
 }
 
 input {
   margin-right: 1em;
   vertical-align: bottom;
-  margin-top: 0.5rem;
+  margin-top: 0.5em;
+}
+
+/* Neural network */
+
+circle.inactive {
+  fill: var(--palette-black);
+  stroke: var(--palette-white);
+  stroke-width: 5px;
+}
+
+circle.active {
+  fill: var(--palette-white);
+  stroke: var(--palette-white);
+  stroke-width: 5px;
+}
+
+text.node-label {
+  font: 8pt sans-serif;
+  pointer-events: none;
+  fill: var(--palette-white);
+}
+
+tspan.cycle-label {
+  font: 6pt sans-serif;
+  fill: var(--palette-dark);
+}
+
+text.weight-label, text.cyclic-weight-label {
+  fill: var(--palette-light);
+  font: 10pt sans-serif;
+}
+
+path.link {
+  fill: none;
+  stroke-width: 2.8px;
+}
+
+path.inactive {
+  stroke: var(--palette-white);
+  stroke-dasharray: none;
+  animation: none;
+}
+
+path.active {
+  stroke: var(--palette-white);
+  stroke-dasharray: 5;
+  animation: none;
+}
+
+path.exc.active {
+  animation: exc-anim 1s linear forwards infinite;
+}
+
+path.inh.active {
+  animation: inh-anim 1s linear forwards infinite;
+}
+
+@keyframes inh-anim {
+  to {
+    stroke-dashoffset: 20;
+  }
+}
+
+@keyframes exc-anim {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+text.shadow {
+  stroke: var(--palette-black);
+  stroke-width: 3px;
+}
+
+marker#exc {
+  stroke: var(--palette-white);
+  fill: var(--palette-white);
+  stroke-linejoin: round;
+}
+
+marker#inh {
+  stroke: var(--palette-white);
+  fill: var(--palette-black);
+  stroke-linejoin: round;
+}
+
+/* Neuron context graph */
+
+#graph path {
+   fill: none;
+   stroke: var(--palette-red);
+}
+
+#graph .func-label  {
+  fill: var(--palette-black);
+  font: 10px sans-serif;
+}
+
+#graph .graph-bg {
+  fill: var(--palette-white);
+  stroke: var(--palette-light);
+  stroke-width: 2;
+  opacity: 0.7;
 }

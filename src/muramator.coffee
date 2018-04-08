@@ -31,7 +31,7 @@ muramatorNetwork = (kf, kt, neurons) ->
   dendrites = [
       source: named 'emitter'
       target: named 'detect_obs'
-      weight: 8
+      weight: 0
     ,
       label: 'avoid'
       source: named 'detect_obs'
@@ -149,13 +149,19 @@ simulator = (neuronGraph) -> (state) ->
     updateNode.selectAll('circle').attr 'class', (d) ->
       if d.active then "active" else "inactive"
 
-    # Highligh active dendrites
-    updateNode.selectAll('.link').attr 'stroke', (d) ->
-      if d.source.active then "#f88" else "#aaa"
+    # Highlight active dendrites
+
+    updateNode.selectAll('.link')
+      .classed('active', (d) ->
+        d.source.active
+      ).classed('inactive', (d) ->
+        !d.source.active
+      )
 
     # Display dendrite labels.
     updateNode.selectAll('text.weight-label').text (t) ->
-      "#{t.weight} #{t.label ? ""}"
+      label = t.label ? ""
+      "#{t.weight} #{label}"
 
     for link in state.network.links when !link.target.allTheTime
       source = link.source
@@ -223,7 +229,7 @@ simControlAction = (doc, state) ->
       state.running = false
 
 setSimulationControl = (doc, state) ->
-  doc.querySelectorAll('input[name=obstacle]').forEach (input) ->
+  doc.querySelectorAll('input[name=simulate]').forEach (input) ->
     input.onchange = simControlAction doc, state
 
 obstacleAction = (doc, state) ->
@@ -231,6 +237,7 @@ obstacleAction = (doc, state) ->
     for link in state.network.links when link.source.name == 'emitter' and link.target.name == 'detect_obs'
       obstacle = @checked
       link.weight = if obstacle then 8 else 0
+      presenter = simulator document.muramator.neuronGraph
 
 setObstacleControl = (doc, state) ->
   doc.querySelectorAll('input[name=obstacle]').forEach (input) ->
