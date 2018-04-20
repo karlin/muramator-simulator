@@ -26,13 +26,14 @@
     "gulp": "*",
     "gulp-coffee": "*",
     "gulp-concat": "*",
-    "gulp-sourcemaps": "*",
     "gulp-connect": "*",
     "gulp-plumber": "*",
     "gulp-rimraf": "*",
+    "gulp-sourcemaps": "*",
     "gulp-uglify": "*",
     "gulp-watch": "*",
     "livereload": "*",
-    "open": "*"
+    "open": "*",
+    "prettier": "1.11.1"
   }
 }
