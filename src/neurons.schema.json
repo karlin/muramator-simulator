@@ -1,0 +1,32 @@
+{
+    "title": "JSON schema for Muramator Simulator network definitions",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "neurons": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "A label to identify this neuron"
+                    },
+                    "x": {
+                        "type": "number"
+                    },
+                    "y": {
+                        "type": "number"
+                    },
+                    "cycle": {
+                        "type": "integer"
+                    },
+                    "allTheTime": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "description": "A list of neurons in the network."
+        }
+    }
+}

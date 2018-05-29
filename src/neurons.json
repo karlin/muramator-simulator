@@ -1,4 +1,5 @@
 {
+  "$schema": "http://localhost:8888/src/neurons.schema.json",
   "neurons": [
     {"name": "detect_obs", "x": 200, "y": 100, "cycle": 150},
     {"name": "sk_supp_av", "x": 300, "y": 100},
