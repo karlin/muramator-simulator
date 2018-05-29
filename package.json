@@ -2,16 +2,12 @@
   "name": "muramator-simulator",
   "version": "0.0.0",
   "description": "Simulate neurons in a manner similar to the Muramator robot",
-  "main": "muramator.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/karlin/muramator-simulator.git"
   },
   "keywords": [
-    "neurons"
+    "neurons", "robots"
   ],
   "author": "Karlin Fox",
   "license": "ISC",
@@ -20,20 +16,6 @@
   },
   "homepage": "https://github.com/karlin/muramator-simulator",
   "devDependencies": {
-    "coffeescript@next": "*",
-    "connect": "*",
-    "del": "*",
-    "gulp": "*",
-    "gulp-coffee": "*",
-    "gulp-concat": "*",
-    "gulp-connect": "*",
-    "gulp-plumber": "*",
-    "gulp-rimraf": "*",
-    "gulp-sourcemaps": "*",
-    "gulp-uglify": "*",
-    "gulp-watch": "*",
-    "livereload": "*",
-    "open": "*",
     "prettier": "1.11.1"
   }
 }
