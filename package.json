@@ -9,6 +9,9 @@
   "keywords": [
     "neurons", "robots"
   ],
+  "scripts": {
+      "pretty": "yarn run prettier --write src/js/*.js"
+  },
   "author": "Karlin Fox",
   "license": "ISC",
   "bugs": {
