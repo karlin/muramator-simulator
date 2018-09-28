@@ -1,4 +1,6 @@
-document.muramator.neuronGraph = function(network) {
+import { contextGraph } from "./contextGraph.js";
+
+export function neuronGraph(network) {
   const { nodes } = network;
   const { links } = network;
 
@@ -129,7 +131,7 @@ document.muramator.neuronGraph = function(network) {
   nodeShape.on("contextmenu", function(neuron) {
     d3.event.preventDefault();
     __guard__(document.querySelector("#graph"), x => x.remove());
-    document.muramator.contextGraph(neuron.name, () => neuron.inputAgg)();
+    contextGraph(neuron.name, () => neuron.inputAgg)();
 
     const graphFrame = d3.select("#graph");
     const coords = d3.mouse(graphFrame[0].parentNode);
@@ -196,9 +198,9 @@ document.muramator.neuronGraph = function(network) {
     return setTimeout(() => force.stop(), 1400);
   });
   return svg;
-};
+}
 
-function __guard__(value, transform) {
+export function __guard__(value, transform) {
   return typeof value !== "undefined" && value !== null
     ? transform(value)
     : undefined;

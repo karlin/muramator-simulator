@@ -1,5 +1,8 @@
 // see also, http://jsfiddle.net/karlin/dQvQg/1/
 
+import { contextGraph } from "./contextGraph.js";
+import { neuronGraph, __guard__ } from "./svg.js";
+
 const connect = function(source, target, params) {
   const dendrite = {
     source,
@@ -333,10 +336,11 @@ const state = {
   // endSimulationTime: 10000
   running: true,
   reportOn: false,
-  epsilon: 0.0001
+  epsilon: 0.0001,
+  graph: {}
 };
 
-const presenter = simulator(document.muramator.neuronGraph);
+const presenter = simulator(neuronGraph);
 showMuramatorNetwork(presenter, state);
 setReportControl(document, state);
 setSimulationControl(document, state);

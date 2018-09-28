@@ -1,4 +1,4 @@
-document.muramator.contextGraph = function(name, valueFunc) {
+export function contextGraph(name, valueFunc) {
   const n = 40;
   const data = d3.range(n).map(x => valueFunc());
   const margin = {
@@ -75,4 +75,4 @@ document.muramator.contextGraph = function(name, valueFunc) {
   };
 
   return tick;
-};
+}
