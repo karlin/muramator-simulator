@@ -2,6 +2,7 @@
 
 import { contextGraph } from "./contextGraph.js";
 import { neuronGraph, __guard__ } from "./svg.js";
+import { app } from "./world.js";
 
 const connect = function(source, target, params) {
   const dendrite = {
@@ -145,13 +146,13 @@ const simulator = neuronGraph =>
       }
       n.visited = 0;
       if (n.allTheTime) {
-        return (n.fn = () => {
+        n.fn = () => {
           n.active = true;
           n.inputAgg = 1.0;
           return (n.output = 1.0);
-        });
+        }
       } else {
-        return (n.fn = () => {
+        n.fn = () => {
           n.inputAggV = 0.0;
 
           const activating = Math.abs(1.0 - n.inputAgg) < state.epsilon;
@@ -176,8 +177,14 @@ const simulator = neuronGraph =>
             n.active = false;
           }
 
-          return (n.output = n.active ? 1 : 0);
-        });
+          var oldOutput = n.output;
+          n.output = n.active ? 1 : 0;
+          if (typeof n.onOutputChange !== "undefined" && n.onOutputChange !== null) {
+            if (n.active ? oldOutput == 1 : oldOutput == 0) {
+              n.onOutputChange(n.output);
+            }
+          }
+        }
       }
     });
 
@@ -262,9 +269,20 @@ const showMuramatorNetwork = (present, state) =>
     .then(response => response.json())
     .then(function(data) {
       state.kf = 6;
-      state.kt = -10;
+      state.kt = -100;
       state.neurons = data.neurons;
       state.network = muramatorNetwork(state.kf, state.kt, data.neurons);
+
+      // hook up "forward" to motor
+      state.neurons.find(n => n.name === "forward").onOutputChange = (output) => {
+        world.emit({type: output == 1 ? "forwardOn" : "forwardOff"});
+      };
+
+      // hook up "turn" to motor inhibitor
+      state.neurons.find(n => n.name === "turn").onOutputChange = (output) => {
+        world.emit({type: output == 1 ? "turnOn" : "turnOff"});
+      };
+
       return present(state);
     });
 
@@ -332,7 +350,7 @@ const setObstacleControl = (doc, state) =>
 document.getElementsByTagName("form")[0].reset();
 
 const state = {
-  frameMillis: 200.0,
+  frameMillis: 50.0,
   // endSimulationTime: 10000
   running: true,
   reportOn: false,
@@ -344,5 +362,16 @@ const presenter = simulator(neuronGraph);
 showMuramatorNetwork(presenter, state);
 setReportControl(document, state);
 setSimulationControl(document, state);
-setObstacleControl(document, state);
-// showSimpleNetwork presenter, state
+
+// document.addEventListener("obstacle", function(e) {
+//   obstacleAction(document, state).bind({checked:true}).call();
+// }, false);
+
+app.world.on("obstacle", e => {
+  obstacleAction(document, state).bind({checked:true}).call();
+});
+app.world.on("noObstacle", e => {
+  obstacleAction(document, state).bind({checked:false}).call();
+});
+
+// setObstacleControl(document, state);

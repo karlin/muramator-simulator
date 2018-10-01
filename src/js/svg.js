@@ -37,7 +37,7 @@ export function neuronGraph(network) {
 
   const svg = d3
     .select("body")
-    .append("svg")
+    .insert("svg", ":first-child")
     .attr("width", w)
     .attr("height", h);
 

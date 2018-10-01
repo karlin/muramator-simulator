@@ -5108,8 +5108,8 @@ PIXI.WebGLRenderer.prototype.render = function(stage)
     gl.clearColor(stage.backgroundColorSplit[0],stage.backgroundColorSplit[1],stage.backgroundColorSplit[2], !this.transparent);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-  //  this.projection.x =  this.width/2;
-    //this.projection.y =  -this.height/2;
+    // this.projection.x =  this.width/2;
+    // this.projection.y =  -this.height/2;
 
     this.renderDisplayObject( stage, this.projection );
 
@@ -12433,7 +12433,7 @@ dat.utils.css = (function () {
 
 
 dat.utils.common = (function () {
-  
+
   var ARR_EACH = Array.prototype.forEach;
   var ARR_SLICE = Array.prototype.slice;
 
@@ -12443,38 +12443,38 @@ dat.utils.common = (function () {
    * http://documentcloud.github.com/underscore/
    */
 
-  return { 
-    
+  return {
+
     BREAK: {},
-  
+
     extend: function(target) {
-      
+
       this.each(ARR_SLICE.call(arguments, 1), function(obj) {
-        
+
         for (var key in obj)
-          if (!this.isUndefined(obj[key])) 
+          if (!this.isUndefined(obj[key]))
             target[key] = obj[key];
-        
+
       }, this);
-      
+
       return target;
-      
+
     },
-    
+
     defaults: function(target) {
-      
+
       this.each(ARR_SLICE.call(arguments, 1), function(obj) {
-        
+
         for (var key in obj)
-          if (this.isUndefined(target[key])) 
+          if (this.isUndefined(target[key]))
             target[key] = obj[key];
-        
+
       }, this);
-      
+
       return target;
-    
+
     },
-    
+
     compose: function() {
       var toCall = ARR_SLICE.call(arguments);
             return function() {
@@ -12485,35 +12485,35 @@ dat.utils.common = (function () {
               return args[0];
             }
     },
-    
+
     each: function(obj, itr, scope) {
 
       if (!obj) return;
 
-      if (ARR_EACH && obj.forEach && obj.forEach === ARR_EACH) { 
-        
+      if (ARR_EACH && obj.forEach && obj.forEach === ARR_EACH) {
+
         obj.forEach(itr, scope);
-        
+
       } else if (obj.length === obj.length + 0) { // Is number but not NaN
-        
+
         for (var key = 0, l = obj.length; key < l; key++)
-          if (key in obj && itr.call(scope, obj[key], key) === this.BREAK) 
+          if (key in obj && itr.call(scope, obj[key], key) === this.BREAK)
             return;
-            
+
       } else {
 
-        for (var key in obj) 
+        for (var key in obj)
           if (itr.call(scope, obj[key], key) === this.BREAK)
             return;
-            
+
       }
-            
+
     },
-    
+
     defer: function(fnc) {
       setTimeout(fnc, 0);
     },
-    
+
     toArray: function(obj) {
       if (obj.toArray) return obj.toArray();
       return ARR_SLICE.call(obj);
@@ -12522,41 +12522,41 @@ dat.utils.common = (function () {
     isUndefined: function(obj) {
       return obj === undefined;
     },
-    
+
     isNull: function(obj) {
       return obj === null;
     },
-    
+
     isNaN: function(obj) {
       return obj !== obj;
     },
-    
+
     isArray: Array.isArray || function(obj) {
       return obj.constructor === Array;
     },
-    
+
     isObject: function(obj) {
       return obj === Object(obj);
     },
-    
+
     isNumber: function(obj) {
       return obj === obj+0;
     },
-    
+
     isString: function(obj) {
       return obj === obj+'';
     },
-    
+
     isBoolean: function(obj) {
       return obj === false || obj === true;
     },
-    
+
     isFunction: function(obj) {
       return Object.prototype.toString.call(obj) === '[object Function]';
     }
-  
+
   };
-    
+
 })();
 
 
@@ -12731,7 +12731,7 @@ dat.dom.dom = (function (common) {
   var dom = {
 
     /**
-     * 
+     *
      * @param elem
      * @param selectable
      */
@@ -12951,7 +12951,7 @@ dat.dom.dom = (function (common) {
 
     // http://stackoverflow.com/posts/2684561/revisions
     /**
-     * 
+     *
      * @param elem
      */
     isActive: function(elem) {
@@ -13317,7 +13317,7 @@ dat.controllers.NumberControllerSlider = (function (NumberController, dom, css, 
    *
    * @extends dat.controllers.Controller
    * @extends dat.controllers.NumberController
-   * 
+   *
    * @param {Object} object The object to be manipulated
    * @param {string} property The name of the property to be manipulated
    * @param {Number} minValue Minimum allowed value
@@ -13334,11 +13334,11 @@ dat.controllers.NumberControllerSlider = (function (NumberController, dom, css, 
 
     this.__background = document.createElement('div');
     this.__foreground = document.createElement('div');
-    
+
 
 
     dom.bind(this.__background, 'mousedown', onMouseDown);
-    
+
     dom.addClass(this.__background, 'slider');
     dom.addClass(this.__foreground, 'slider-fg');
 
@@ -13356,7 +13356,7 @@ dat.controllers.NumberControllerSlider = (function (NumberController, dom, css, 
 
       var offset = dom.getOffset(_this.__background);
       var width = dom.getWidth(_this.__background);
-      
+
       _this.setValue(
       	map(e.clientX, offset.left, offset.left + width, _this.__min, _this.__max)
       );
@@ -13413,7 +13413,7 @@ dat.controllers.NumberControllerSlider = (function (NumberController, dom, css, 
 	}
 
   return NumberControllerSlider;
-  
+
 })(dat.controllers.NumberController,
 dat.dom.dom,
 dat.utils.css,
@@ -13461,7 +13461,7 @@ dat.controllers.FunctionController = (function (Controller, dom, common) {
       FunctionController.prototype,
       Controller.prototype,
       {
-        
+
         fire: function() {
           if (this.__onChange) {
             this.__onChange.call(this);
@@ -13536,10 +13536,10 @@ dat.controllers.BooleanController = (function (Controller, dom, common) {
         },
 
         updateDisplay: function() {
-          
+
           if (this.getValue() === true) {
             this.__checkbox.setAttribute('checked', 'checked');
-            this.__checkbox.checked = true;    
+            this.__checkbox.checked = true;
           } else {
               this.__checkbox.checked = false;
           }
@@ -15311,7 +15311,7 @@ dat.controllers.StringController = (function (Controller, dom, common) {
         this.blur();
       }
     });
-    
+
 
     function onChange() {
       _this.setValue(_this.__input.value);
@@ -15437,7 +15437,7 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
       borderRadius: '12px',
       zIndex: 1
     });
-    
+
     common.extend(this.__hue_knob.style, {
       position: 'absolute',
       width: '15px',
@@ -15460,7 +15460,7 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
       height: '100%',
       background: 'none'
     });
-    
+
     linearGradient(value_field, 'top', 'rgba(0,0,0,0)', '#000');
 
     common.extend(this.__hue_field.style, {
@@ -15647,16 +15647,16 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
       }
 
   );
-  
+
   var vendors = ['-moz-','-o-','-webkit-','-ms-',''];
-  
+
   function linearGradient(elem, x, a, b) {
     elem.style.background = '';
     common.each(vendors, function(vendor) {
       elem.style.cssText += 'background: ' + vendor + 'linear-gradient('+x+', '+a+' 0%, ' + b + ' 100%); ';
     });
   }
-  
+
   function hueGradient(elem) {
     elem.style.background = '';
     elem.style.cssText += 'background: -moz-linear-gradient(top,  #ff0000 0%, #ff00ff 17%, #0000ff 34%, #00ffff 50%, #00ff00 67%, #ffff00 84%, #ff0000 100%);'
@@ -15991,7 +15991,7 @@ dat.dom.CenteredDiv = (function (dom, common) {
   CenteredDiv.prototype.show = function() {
 
     var _this = this;
-    
+
 
 
     this.backgroundElement.style.display = 'block';
@@ -16041,7 +16041,7 @@ dat.dom.CenteredDiv = (function (dom, common) {
     this.domElement.style.left = window.innerWidth/2 - dom.getWidth(this.domElement) / 2 + 'px';
     this.domElement.style.top = window.innerHeight/2 - dom.getHeight(this.domElement) / 2 + 'px';
   };
-  
+
   function lockScroll(e) {
     console.log(e);
   }
@@ -16161,10 +16161,10 @@ function Renderer(scenes, options){
 
         'paused [p]': false,
         'manualStep [s]': function(){ that.world.step(that.world.lastTimeStep); },
-        fps: 60,
+        fps: 45,
         maxSubSteps: 3,
         gravityX: 0,
-        gravityY: -10,
+        gravityY: 0,
         sleepMode: p2.World.NO_SLEEPING,
 
         'drawContacts [c]': false,
@@ -16172,7 +16172,7 @@ function Renderer(scenes, options){
         drawConstraints: false,
 
         iterations: 10,
-        stiffness: 1000000,
+        stiffness: 100000,
         relaxation: 4,
         tolerance: 0.0001,
     };
@@ -16320,67 +16320,67 @@ Renderer.prototype.setupGUI = function() {
     worldFolder.add(settings, 'paused [p]').onChange(function(p){
         that.paused = p;
     });
-    worldFolder.add(settings, 'manualStep [s]');
+    // worldFolder.add(settings, 'manualStep [s]');
     worldFolder.add(settings, 'fps', 10, 60*10).step(10).onChange(function(freq){
         that.timeStep = 1 / freq;
     });
-    worldFolder.add(settings, 'maxSubSteps', 0, 10).step(1);
-    var maxg = 100;
+    // worldFolder.add(settings, 'maxSubSteps', 0, 10).step(1);
+    // var maxg = 100;
 
-    function changeGravity(){
-        if(!isNaN(settings.gravityX) && !isNaN(settings.gravityY)){
-            p2.vec2.set(that.world.gravity, settings.gravityX, settings.gravityY);
-        }
-    }
-    worldFolder.add(settings, 'gravityX', -maxg, maxg).onChange(changeGravity);
-    worldFolder.add(settings, 'gravityY', -maxg, maxg).onChange(changeGravity);
-    worldFolder.add(settings, 'sleepMode', {
-        NO_SLEEPING: p2.World.NO_SLEEPING,
-        BODY_SLEEPING: p2.World.BODY_SLEEPING,
-        ISLAND_SLEEPING: p2.World.ISLAND_SLEEPING,
-    }).onChange(function(mode){
-        that.world.sleepMode = parseInt(mode);
-    });
+    // function changeGravity(){
+    //     if(!isNaN(settings.gravityX) && !isNaN(settings.gravityY)){
+    //         p2.vec2.set(that.world.gravity, settings.gravityX, settings.gravityY);
+    //     }
+    // }
+    // worldFolder.add(settings, 'gravityX', -maxg, maxg).onChange(changeGravity);
+    // worldFolder.add(settings, 'gravityY', -maxg, maxg).onChange(changeGravity);
+    // worldFolder.add(settings, 'sleepMode', {
+    //     NO_SLEEPING: p2.World.NO_SLEEPING,
+    //     BODY_SLEEPING: p2.World.BODY_SLEEPING,
+    //     ISLAND_SLEEPING: p2.World.ISLAND_SLEEPING,
+    // }).onChange(function(mode){
+    //     that.world.sleepMode = parseInt(mode);
+    // });
 
     // Rendering
-    var renderingFolder = gui.addFolder('Rendering');
-    renderingFolder.open();
-    renderingFolder.add(settings,'drawContacts [c]').onChange(function(draw){
-        that.drawContacts = draw;
-    });
-    renderingFolder.add(settings,'drawAABBs [t]').onChange(function(draw){
-        that.drawAABBs = draw;
-    });
+    // var renderingFolder = gui.addFolder('Rendering');
+    // renderingFolder.open();
+    // renderingFolder.add(settings,'drawContacts [c]').onChange(function(draw){
+    //     that.drawContacts = draw;
+    // });
+    // renderingFolder.add(settings,'drawAABBs [t]').onChange(function(draw){
+    //     that.drawAABBs = draw;
+    // });
 
     // Solver
-    var solverFolder = gui.addFolder('Solver');
-    solverFolder.open();
-    solverFolder.add(settings, 'iterations', 1, 100).step(1).onChange(function(it){
-        that.world.solver.iterations = it;
-    });
-    solverFolder.add(settings, 'stiffness', 10).onChange(function(k){
-        that.setEquationParameters();
-    });
-    solverFolder.add(settings, 'relaxation', 0, 20).step(0.1).onChange(function(d){
-        that.setEquationParameters();
-    });
-    solverFolder.add(settings, 'tolerance', 0, 10).step(0.01).onChange(function(t){
-        that.world.solver.tolerance = t;
-    });
+    // var solverFolder = gui.addFolder('Solver');
+    // solverFolder.open();
+    // solverFolder.add(settings, 'iterations', 1, 100).step(1).onChange(function(it){
+    //     that.world.solver.iterations = it;
+    // });
+    // solverFolder.add(settings, 'stiffness', 1000).onChange(function(k){
+    //     that.setEquationParameters();
+    // });
+    // solverFolder.add(settings, 'relaxation', 0, 20).step(0.1).onChange(function(d){
+    //     that.setEquationParameters();
+    // });
+    // solverFolder.add(settings, 'tolerance', 0.0000001, 0.1).step(0.001).onChange(function(t){
+    //     that.world.solver.tolerance = t;
+    // });
 
-    // Scene picker
-    var sceneFolder = gui.addFolder('Scenes');
-    sceneFolder.open();
+    // // Scene picker
+    // var sceneFolder = gui.addFolder('Scenes');
+    // sceneFolder.open();
 
-    // Add scenes
-    var i = 1;
-    for(var sceneName in this.scenes){
-        var guiLabel = sceneName + ' [' + (i++) + ']';
-        this.settings[guiLabel] = function(){
-            that.setScene(that.scenes[sceneName]);
-        };
-        sceneFolder.add(settings, guiLabel);
-    }
+    // // Add scenes
+    // var i = 1;
+    // for(var sceneName in this.scenes){
+    //     var guiLabel = sceneName + ' [' + (i++) + ']';
+    //     this.settings[guiLabel] = function(){
+    //         that.setScene(that.scenes[sceneName]);
+    //     };
+    //     sceneFolder.add(settings, guiLabel);
+    // }
 };
 
 /**
@@ -16477,11 +16477,11 @@ Renderer.prototype.setScene = function(sceneDefinition){
 
     // Set the GUI parameters from the loaded world
     var settings = this.settings;
-    settings.iterations = this.world.solver.iterations;
-    settings.tolerance = this.world.solver.tolerance;
-    settings.gravityX = this.world.gravity[0];
-    settings.gravityY = this.world.gravity[1];
-    settings.sleepMode = this.world.sleepMode;
+    // settings.iterations = this.world.solver.iterations;
+    // settings.tolerance = this.world.solver.tolerance;
+    // settings.gravityX = this.world.gravity[0];
+    // settings.gravityY = this.world.gravity[1];
+    // settings.sleepMode = this.world.sleepMode;
     this.updateGUI();
 };
 
@@ -16751,7 +16751,7 @@ Renderer.prototype.handleMouseUp = function(physicsPosition){
         this.setState(Renderer.DRAWPOLYGON);
         if(this.drawPoints.length > 3){
             // Create polygon
-            b = new p2.Body({ mass : 1 });
+            b = new p2.Body({ mass : 0 });
             if(b.fromPolygon(this.drawPoints,{
                 removeCollinearPoints : 0.01,
             })){
@@ -16768,7 +16768,7 @@ Renderer.prototype.handleMouseUp = function(physicsPosition){
         var R = p2.vec2.dist(this.drawCircleCenter,this.drawCirclePoint);
         if(R > 0){
             // Create circle
-            b = new p2.Body({ mass : 1, position : this.drawCircleCenter });
+            b = new p2.Body({ mass : 0, position : this.drawCircleCenter });
             var circle = new p2.Circle({ radius: R });
             b.addShape(circle);
             this.world.addBody(b);
@@ -16795,7 +16795,7 @@ Renderer.prototype.handleMouseUp = function(physicsPosition){
         if(width > 0 && height > 0){
             // Create box
             b = new p2.Body({
-                mass : 1,
+                mass : 0,
                 position : [this.drawRectStart[0] + width*0.5, this.drawRectStart[1] + height*0.5]
             });
             var rectangleShape = new p2.Box({ width: width, height:  height });
@@ -16908,29 +16908,6 @@ Renderer.prototype.createStats = function(){
     */
 };
 
-Renderer.prototype.addLogo = function(){
-    var css = [
-        'position:absolute',
-        'left:10px',
-        'top:15px',
-        'text-align:center',
-        'font: 13px Helvetica, arial, freesans, clean, sans-serif',
-    ].concat(disableSelectionCSS);
-
-    var div = document.createElement('div');
-    div.innerHTML = [
-        "<div style='"+css.join(';')+"' user-select='none'>",
-        "<h1 style='margin:0px'><a href='http://github.com/schteppe/p2.js' style='color:black; text-decoration:none;'>p2.js</a></h1>",
-        "<p style='margin:5px'>Physics Engine</p>",
-        '<a style="color:black; text-decoration:none;" href="https://twitter.com/share" class="twitter-share-button" data-via="schteppe" data-count="none" data-hashtags="p2js">Tweet</a>',
-        "</div>"
-    ].join("");
-    this.elementContainer.appendChild(div);
-
-    // Twitter button script
-    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-};
-
 Renderer.zoomInEvent = {
     type:"zoomin"
 };
@@ -16938,10 +16915,10 @@ Renderer.zoomOutEvent = {
     type:"zoomout"
 };
 
-Renderer.prototype.setEquationParameters = function(){
-    this.world.setGlobalStiffness(this.settings.stiffness);
-    this.world.setGlobalRelaxation(this.settings.relaxation);
-};
+// Renderer.prototype.setEquationParameters = function(){
+    // this.world.setGlobalStiffness(this.settings.stiffness);
+    // this.world.setGlobalRelaxation(this.settings.relaxation);
+// };
 
 })(p2);
 /* global PIXI,Renderer */
@@ -16971,8 +16948,8 @@ function WebGLRenderer(scenes, options){
 
     var settings = {
         lineWidth : 0.2,
-        scrollFactor : 0.0,
-        width : 1280, // Pixi screen resolution
+        scrollFactor : 0.2,
+        width : 1000, // Pixi screen resolution
         height : 1000,
         useDeviceAspect : false,
         sleepOpacity : 0.2,
@@ -17052,6 +17029,7 @@ WebGLRenderer.prototype.stagePositionToPhysics = function(out,stagePosition){
  */
 var init_stagePosition = p2.vec2.create(),
     init_physicsPosition = p2.vec2.create();
+
 WebGLRenderer.prototype.init = function(){
     var w = this.w,
         h = this.h,
@@ -17064,9 +17042,10 @@ WebGLRenderer.prototype.init = function(){
     var container = this.container =    new PIXI.Stage(0x000000,true);
 
     var el = this.element = this.renderer.view;
-    el.tabIndex = 1;
+    el.tabIndex = 0;
     el.classList.add(Renderer.elementClass);
-    el.setAttribute('style','width:50%;');
+    el.setAttribute('style','width:50%; height:100%');
+    // el.setAttribute('style','width:50%;');
 
     var div = this.elementContainer = document.createElement('div');
     div.classList.add(Renderer.containerClass);
@@ -17092,8 +17071,8 @@ WebGLRenderer.prototype.init = function(){
     this.aabbGraphics = new PIXI.Graphics();
     stage.addChild(this.aabbGraphics);
 
-    stage.scale.x = 50; // Flip Y direction.
-    stage.scale.y = -50;
+    stage.scale.x = 15; // Flip Y direction.
+    stage.scale.y = -15;
 
     var lastX, lastY, lastMoveX, lastMoveY, startX, startY, down=false;
 
@@ -17667,8 +17646,8 @@ WebGLRenderer.prototype.render = function(){
     }
 
     if(this.followBody){
-        console.log(this.followBody);
-        app.centerCamera(this.followBody.interpolatedPosition[0], this.followBody.interpolatedPosition[1]);
+        app.centerCamera(this.followBody.interpolatedPosition[0],
+            this.followBody.interpolatedPosition[1]);
     }
 
     this.renderer.render(this.container);
