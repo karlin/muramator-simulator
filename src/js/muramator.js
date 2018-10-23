@@ -188,7 +188,7 @@ const simulator = neuronGraph =>
       }
     });
 
-    const dt = state.frameMillis / 1000.0;
+    const dt = state.frameMillis / 250.0;
 
     const simulationStep = setInterval(
       function() {
@@ -350,7 +350,7 @@ const setObstacleControl = (doc, state) =>
 document.getElementsByTagName("form")[0].reset();
 
 const state = {
-  frameMillis: 50.0,
+  frameMillis: 100.0,
   // endSimulationTime: 10000
   running: true,
   reportOn: false,

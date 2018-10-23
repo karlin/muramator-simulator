@@ -5,8 +5,8 @@ export var app = new p2.WebGLRenderer(function() {
     gravity: [0, 0]
   });
   this.setWorld(world);
-  world.defaultContactMaterial.friction = 100;
-  // world.solver.frictionIterations = 10;
+  world.defaultContactMaterial.friction = 1;
+  // world.solver.frictionIterations = 1;
   // world.useWorldGravityAsFrictionGravity=true
   // var topWall = new p2.Box({ width: 100, height: 100 });
   // world.addBody(topWall);
@@ -48,8 +48,8 @@ export var app = new p2.WebGLRenderer(function() {
 
   // Create a dynamic body for the chassis
   var chassisBody = new p2.Body({
-    mass: 5,
-    intertia: 0.0
+    mass: 2,
+    // intertia: 0.0
   });
   var bodyShape = new p2.Capsule({
     length: 2,
@@ -57,7 +57,7 @@ export var app = new p2.WebGLRenderer(function() {
   });
   chassisBody.addShape(bodyShape);
   var sensor = new p2.Particle({ sensor: true });
-  chassisBody.addShape(sensor, [0, 18]);
+  chassisBody.addShape(sensor, [0, 16]);
   world.addBody(chassisBody);
   this.followBody = chassisBody;
 
@@ -80,15 +80,15 @@ export var app = new p2.WebGLRenderer(function() {
   var frontWheel = vehicle.addWheel({
     localPosition: [0, 0.5] // front
   });
-  frontWheel.setSideFriction(18);
-  frontWheel.setBrakeForce(1);
+  frontWheel.setSideFriction(2);
+  frontWheel.setBrakeForce(0);
 
   // Back wheel
   var backWheel = vehicle.addWheel({
     localPosition: [0, -0.5] // back
   });
-  backWheel.setSideFriction(16); // Less side friction on back wheel makes it easier to drift
-  backWheel.setBrakeForce(1);
+  backWheel.setSideFriction(2); // Less side friction on back wheel makes it easier to drift
+  backWheel.setBrakeForce(0);
 
   vehicle.addToWorld(world);
 
@@ -125,7 +125,7 @@ export var app = new p2.WebGLRenderer(function() {
     "38": 0, // up
     "40": 0 // down
   };
-  var maxSteer = Math.PI / 6;
+  var maxSteer = Math.PI / 4;
 
   // "forward" neuron active
   world.on("forwardOn", (e) => {
@@ -165,17 +165,17 @@ export var app = new p2.WebGLRenderer(function() {
     frontWheel.steerValue = maxSteer * (keys[37] - keys[39]);
 
     // Engine force forward
-    backWheel.engineForce = keys[38] * 4;
+    backWheel.engineForce = keys[38] * 20;
 
     backWheel.setBrakeForce(0);
     if (keys[40]) {
-      if (backWheel.getSpeed() > 0.1) {
+      if (backWheel.getSpeed() > 0.01) {
         // Moving forward - add some brake force to slow down
-        backWheel.setBrakeForce(2);
+        backWheel.setBrakeForce(0.2);
       } else {
         // Moving backwards - reverse the engine force
-        backWheel.setBrakeForce(0);
-        backWheel.engineForce = -10;
+        backWheel.setBrakeForce(0.1);
+        backWheel.engineForce = -12;
       }
     }
   }
