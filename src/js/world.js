@@ -2,7 +2,8 @@
 export var app = new p2.WebGLRenderer(function() {
   // Create a World
   var world = new p2.World({
-    gravity: [0, 0]
+    gravity: [0, 0],
+    sleepMode: p2.World.BODY_SLEEPING
   });
   this.setWorld(world);
   world.defaultContactMaterial.friction = 1;
@@ -15,7 +16,7 @@ export var app = new p2.WebGLRenderer(function() {
   var floor = new p2.Body({
     // fixedY: true,
     // fixedX: true,
-    position: [0, -18]
+    position: [0, -25]
   });
   floor.addShape(floorShape);
   world.addBody(floor);
@@ -25,7 +26,7 @@ export var app = new p2.WebGLRenderer(function() {
     // fixedY: true,
     // fixedX: true,
     angle: 3.14,
-    position: [0, 18]
+    position: [0, 25]
   });
   ceiling.addShape(ceilingShape);
   world.addBody(ceiling);
@@ -48,12 +49,12 @@ export var app = new p2.WebGLRenderer(function() {
 
   // Create a dynamic body for the chassis
   var chassisBody = new p2.Body({
-    mass: 2,
+    mass: 1.5
     // intertia: 0.0
   });
   var bodyShape = new p2.Capsule({
     length: 2,
-    radius: 0.5
+    radius: 1.0
   });
   chassisBody.addShape(bodyShape);
   var sensor = new p2.Particle({ sensor: true });
@@ -78,16 +79,16 @@ export var app = new p2.WebGLRenderer(function() {
 
   // Add one front wheel and one back wheel - we don't actually need four :)
   var frontWheel = vehicle.addWheel({
-    localPosition: [0, 0.5] // front
+    localPosition: [0, 1.5] // front
   });
-  frontWheel.setSideFriction(2);
+  frontWheel.setSideFriction(20);
   frontWheel.setBrakeForce(0);
 
   // Back wheel
   var backWheel = vehicle.addWheel({
-    localPosition: [0, -0.5] // back
+    localPosition: [0, -1.5] // back
   });
-  backWheel.setSideFriction(2); // Less side friction on back wheel makes it easier to drift
+  backWheel.setSideFriction(20); // Less side friction on back wheel makes it easier to drift
   backWheel.setBrakeForce(0);
 
   vehicle.addToWorld(world);
@@ -105,58 +106,58 @@ export var app = new p2.WebGLRenderer(function() {
   // controlBody.addShape(controlShape);
   // world.addBody(controlBody);
 
-  world.on("beginContact", function(event) {
+  world.on('beginContact', function(event) {
     if (event.shapeA.id === sensor.id || event.shapeB.id === sensor.id) {
       // document.dispatchEvent(new Event("obstacle"));
-      world.emit({type: "obstacle"});
+      world.emit({ type: 'obstacle' });
     }
   });
 
-  world.on("endContact", function(event) {
+  world.on('endContact', function(event) {
     if (event.shapeA.id === sensor.id || event.shapeB.id === sensor.id) {
-      world.emit({type: "noObstacle"});
+      world.emit({ type: 'noObstacle' });
     }
   });
 
   // // Key controls
   var keys = {
-    "37": 0, // left
-    "39": 0, // right
-    "38": 0, // up
-    "40": 0 // down
+    '37': 0, // left
+    '39': 0, // right
+    '38': 0, // up
+    '40': 0 // down
   };
   var maxSteer = Math.PI / 4;
 
   // "forward" neuron active
-  world.on("forwardOn", (e) => {
+  world.on('forwardOn', e => {
     keys[38] = 1;
     keys[40] = 0;
     onInputChange();
   });
 
   // "forward" neuron off
-  world.on("forwardOff", (e) => {
+  world.on('forwardOff', e => {
     keys[38] = 0;
     onInputChange();
   });
 
-  world.on("turnOn", (e) => {
+  world.on('turnOn', e => {
     keys[37] = 1;
     keys[40] = 1;
     onInputChange();
   });
 
-  world.on("turnOff", (e) => {
+  world.on('turnOff', e => {
     keys[37] = 0;
     keys[40] = 1;
     onInputChange();
   });
 
-  this.on("keydown", function(evt) {
+  this.on('keydown', function(evt) {
     keys[evt.keyCode] = 1;
     onInputChange();
   });
-  this.on("keyup", function(evt) {
+  this.on('keyup', function(evt) {
     keys[evt.keyCode] = 0;
     onInputChange();
   });
@@ -171,7 +172,7 @@ export var app = new p2.WebGLRenderer(function() {
     if (keys[40]) {
       if (backWheel.getSpeed() > 0.01) {
         // Moving forward - add some brake force to slow down
-        backWheel.setBrakeForce(0.2);
+        backWheel.setBrakeForce(10);
       } else {
         // Moving backwards - reverse the engine force
         backWheel.setBrakeForce(0.1);

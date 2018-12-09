@@ -1,8 +1,8 @@
 // see also, http://jsfiddle.net/karlin/dQvQg/1/
 
-import { contextGraph } from "./contextGraph.js";
-import { neuronGraph, __guard__ } from "./svg.js";
-import { app } from "./world.js";
+import { contextGraph } from './contextGraph.js';
+import { neuronGraph, __guard__ } from './svg.js';
+import { app } from './world.js';
 
 const connect = function(source, target, params) {
   const dendrite = {
@@ -16,8 +16,8 @@ const connect = function(source, target, params) {
 };
 
 const simpleNetwork = function() {
-  const osc = { name: "osc", x: 200, y: 200, cycle: 3000 };
-  const emit_ex = { name: "emit_ex", x: 50, y: 50, allTheTime: true };
+  const osc = { name: 'osc', x: 200, y: 200, cycle: 3000 };
+  const emit_ex = { name: 'emit_ex', x: 50, y: 50, allTheTime: true };
   const neurons = [emit_ex, osc];
 
   const dendrites = [
@@ -36,69 +36,69 @@ const muramatorNetwork = function(kf, kt, neurons) {
 
   const dendrites = [
     {
-      source: named("emitter"),
-      target: named("detect_obs"),
+      source: named('emitter'),
+      target: named('detect_obs'),
       weight: 0
     },
     {
-      label: "avoid",
-      source: named("detect_obs"),
-      target: named("sk_supp_av"),
+      label: 'avoid',
+      source: named('detect_obs'),
+      target: named('sk_supp_av'),
       weight: 2
     },
     {
-      source: named("sk_supp_av"),
-      target: named("turn"),
+      source: named('sk_supp_av'),
+      target: named('turn'),
       weight: 2
     },
     {
-      source: named("detect_obs"),
-      target: named("seek"),
+      source: named('detect_obs'),
+      target: named('seek'),
       weight: -100
     },
     {
-      source: named("seek_ex"),
-      target: named("seek"),
+      source: named('seek_ex'),
+      target: named('seek'),
       size: 100,
       weight: kf,
-      label: "KF"
+      label: 'KF'
     },
     {
-      source: named("seek"),
-      target: named("seek"),
+      source: named('seek'),
+      target: named('seek'),
       weight: kt,
-      label: "KT"
+      label: 'KT'
     },
     {
-      source: named("seek"),
-      target: named("sk_supp_av"),
+      source: named('seek'),
+      target: named('sk_supp_av'),
       weight: 2
     },
     {
-      source: named("sk_supp_av"),
-      target: named("av_supp_ex"),
+      source: named('sk_supp_av'),
+      target: named('av_supp_ex'),
       weight: -2
     },
     {
-      source: named("explore_ex"),
-      target: named("av_supp_ex"),
+      source: named('explore_ex'),
+      target: named('av_supp_ex'),
       weight: 2,
       size: 100
     },
     {
-      source: named("av_supp_ex"),
-      target: named("forward"),
+      source: named('av_supp_ex'),
+      target: named('forward'),
       weight: 2
     },
     {
-      source: named("emit_ex"),
-      target: named("emitter"),
+      source: named('emit_ex'),
+      target: named('emitter'),
       size: 100,
       weight: 2
     },
     {
-      source: named("emitter"),
-      target: named("emitter"),
+      source: named('emitter'),
+      target: named('emitter'),
       weight: -2
     }
   ];
@@ -109,18 +109,18 @@ const muramatorNetwork = function(kf, kt, neurons) {
   };
 };
 
-const debugFmt = d3.format("0.2f");
+const debugFmt = d3.format('0.2f');
 
 const reportNodes = function(nodes, fmt) {
   const eachNode = nodes.map(
     n =>
-      `${n.name}:\t${n.name.length < 7 ? "\t" : ""}${debugFmt(
-        n.inputAgg
-      )}\t${debugFmt(n.output)}\t${n.cycle != null ? n.cycle : "-"}`
+      `${n.name}:\t${n.name.length < 7 ? '\t' : ''}${debugFmt(n.inputAgg)}\t${debugFmt(
+        n.output
+      )}\t${n.cycle != null ? n.cycle : '-'}`
   );
 
   const report = eachNode.reduce((s, n) => `${s}\n${n}`);
-  console.log("===\nNAME\t\tINPUT\tOUTPUT\tCYCLE?\n");
+  console.log('===\nNAME\t\tINPUT\tOUTPUT\tCYCLE?\n');
   console.log(report);
 };
 
@@ -150,7 +150,7 @@ const simulator = neuronGraph =>
           n.active = true;
           n.inputAgg = 1.0;
           return (n.output = 1.0);
-        }
+        };
       } else {
         n.fn = () => {
           n.inputAggV = 0.0;
@@ -179,12 +179,12 @@ const simulator = neuronGraph =>
 
           var oldOutput = n.output;
           n.output = n.active ? 1 : 0;
-          if (typeof n.onOutputChange !== "undefined" && n.onOutputChange !== null) {
+          if (typeof n.onOutputChange !== 'undefined' && n.onOutputChange !== null) {
             if (n.active ? oldOutput == 1 : oldOutput == 0) {
               n.onOutputChange(n.output);
             }
           }
-        }
+        };
       }
     });
 
@@ -199,24 +199,24 @@ const simulator = neuronGraph =>
         state.network.nodes.map(n => n.fn());
 
         // Highlight active neurons
-        updateNode.selectAll("circle").attr("class", function(d) {
+        updateNode.selectAll('circle').attr('class', function(d) {
           if (d.active) {
-            return "active";
+            return 'active';
           } else {
-            return "inactive";
+            return 'inactive';
           }
         });
 
         // Highlight active dendrites
 
         updateNode
-          .selectAll(".link")
-          .classed("active", d => d.source.active)
-          .classed("inactive", d => !d.source.active);
+          .selectAll('.link')
+          .classed('active', d => d.source.active)
+          .classed('inactive', d => !d.source.active);
 
         // Display dendrite labels.
-        updateNode.selectAll("text.weight-label").text(function(t) {
-          const label = t.label != null ? t.label : "";
+        updateNode.selectAll('text.weight-label').text(function(t) {
+          const label = t.label != null ? t.label : '';
           return `${t.weight} ${label}`;
         });
 
@@ -257,30 +257,27 @@ const simulator = neuronGraph =>
     window.network = state.network;
 
     if (state.endSimulationTime != null) {
-      return setTimeout(
-        () => clearInterval(simulationStep),
-        state.endSimulationTime
-      );
+      return setTimeout(() => clearInterval(simulationStep), state.endSimulationTime);
     }
   };
 
 const showMuramatorNetwork = (present, state) =>
-  fetch("neurons.json")
+  fetch('neurons.json')
     .then(response => response.json())
     .then(function(data) {
-      state.kf = 6;
-      state.kt = -100;
+      state.kf = 8;
+      state.kt = -2;
       state.neurons = data.neurons;
       state.network = muramatorNetwork(state.kf, state.kt, data.neurons);
 
       // hook up "forward" to motor
-      state.neurons.find(n => n.name === "forward").onOutputChange = (output) => {
-        world.emit({type: output == 1 ? "forwardOn" : "forwardOff"});
+      state.neurons.find(n => n.name === 'forward').onOutputChange = output => {
+        world.emit({ type: output == 1 ? 'forwardOn' : 'forwardOff' });
       };
 
       // hook up "turn" to motor inhibitor
-      state.neurons.find(n => n.name === "turn").onOutputChange = (output) => {
-        world.emit({type: output == 1 ? "turnOn" : "turnOff"});
+      state.neurons.find(n => n.name === 'turn').onOutputChange = output => {
+        world.emit({ type: output == 1 ? 'turnOn' : 'turnOff' });
       };
 
       return present(state);
@@ -306,7 +303,7 @@ const reportSelectionAction = (doc, state) =>
 
 const setReportControl = (doc, state) =>
   doc
-    .querySelectorAll("input[name=report]")
+    .querySelectorAll('input[name=report]')
     .forEach(input => (input.onchange = reportSelectionAction(doc, state)));
 
 const simControlAction = (doc, state) =>
@@ -320,7 +317,7 @@ const simControlAction = (doc, state) =>
 
 const setSimulationControl = (doc, state) =>
   doc
-    .querySelectorAll("input[name=simulate]")
+    .querySelectorAll('input[name=simulate]')
     .forEach(input => (input.onchange = simControlAction(doc, state)));
 
 const obstacleAction = (doc, state) =>
@@ -328,10 +325,7 @@ const obstacleAction = (doc, state) =>
     return (() => {
       const result = [];
       state.network.links.map(link => {
-        if (
-          link.source.name === "emitter" &&
-          link.target.name === "detect_obs"
-        ) {
+        if (link.source.name === 'emitter' && link.target.name === 'detect_obs') {
           const obstacle = this.checked;
           result.push((link.weight = obstacle ? 8 : 0));
         }
@@ -342,16 +336,16 @@ const obstacleAction = (doc, state) =>
 
 const setObstacleControl = (doc, state) =>
   doc
-    .querySelectorAll("input[name=obstacle]")
+    .querySelectorAll('input[name=obstacle]')
     .forEach(input => (input.onchange = obstacleAction(doc, state)));
 
 // MAIN
 
-document.getElementsByTagName("form")[0].reset();
+document.getElementsByTagName('form')[0].reset();
 
 const state = {
   frameMillis: 100.0,
-  // endSimulationTime: 10000
+  // endSimulationTime: 10000,
   running: true,
   reportOn: false,
   epsilon: 0.0001,
@@ -367,11 +361,15 @@ setSimulationControl(document, state);
 //   obstacleAction(document, state).bind({checked:true}).call();
 // }, false);
 
-app.world.on("obstacle", e => {
-  obstacleAction(document, state).bind({checked:true}).call();
+app.world.on('obstacle', e => {
+  obstacleAction(document, state)
+    .bind({ checked: true })
+    .call();
 });
-app.world.on("noObstacle", e => {
-  obstacleAction(document, state).bind({checked:false}).call();
+app.world.on('noObstacle', e => {
+  obstacleAction(document, state)
+    .bind({ checked: false })
+    .call();
 });
 
 // setObstacleControl(document, state);

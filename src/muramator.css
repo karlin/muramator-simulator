@@ -45,7 +45,8 @@ tspan.cycle-label {
   fill: var(--palette-dark);
 }
 
-text.weight-label, text.cyclic-weight-label {
+text.weight-label,
+text.cyclic-weight-label {
   fill: var(--palette-light);
   font: 10pt sans-serif;
 }
@@ -107,11 +108,11 @@ marker#inh {
 /* Neuron context graph */
 
 #graph path {
-   fill: none;
-   stroke: var(--palette-red);
+  fill: none;
+  stroke: var(--palette-red);
 }
 
-#graph .func-label  {
+#graph .func-label {
   fill: var(--palette-black);
   font: 10px sans-serif;
 }
@@ -121,4 +122,10 @@ marker#inh {
   stroke: var(--palette-light);
   stroke-width: 2;
   opacity: 0.7;
+}
+
+/* Physics simulation */
+
+.p2-container {
+  width: 480px !important;
 }
