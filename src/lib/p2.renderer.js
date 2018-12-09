@@ -16161,11 +16161,11 @@ function Renderer(scenes, options){
 
         'paused [p]': false,
         'manualStep [s]': function(){ that.world.step(that.world.lastTimeStep); },
-        fps: 45,
+        fps: 24,
         maxSubSteps: 3,
         gravityX: 0,
         gravityY: 0,
-        sleepMode: p2.World.NO_SLEEPING,
+        // sleepMode: p2.World.NO_SLEEPING,
 
         'drawContacts [c]': false,
         'drawAABBs [t]': false,
@@ -16321,7 +16321,7 @@ Renderer.prototype.setupGUI = function() {
         that.paused = p;
     });
     // worldFolder.add(settings, 'manualStep [s]');
-    worldFolder.add(settings, 'fps', 10, 60*10).step(10).onChange(function(freq){
+    worldFolder.add(settings, 'fps', 10, 60*10).step(5).onChange(function(freq){
         that.timeStep = 1 / freq;
     });
     // worldFolder.add(settings, 'maxSubSteps', 0, 10).step(1);
@@ -17044,12 +17044,15 @@ WebGLRenderer.prototype.init = function(){
     var el = this.element = this.renderer.view;
     el.tabIndex = 0;
     el.classList.add(Renderer.elementClass);
-    el.setAttribute('style','width:50%; height:100%');
+    el.setAttribute('style', 'width:480px; height:480px');
     // el.setAttribute('style','width:50%;');
 
-    var div = this.elementContainer = document.createElement('div');
+    // var div = (this.elementContainer = document.createElement('div'));
+    var div = document.getElementById('p2-root');
+    this.elementContainer = div;
+    
     div.classList.add(Renderer.containerClass);
-    div.setAttribute('style','width:100%; height:100%');
+    div.setAttribute('style', 'float: right; width:50%; height:100%;');
     div.appendChild(el);
     document.body.appendChild(div);
     el.focus();
